@@ -2,6 +2,7 @@ import { UserModel } from "../models/user.models.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.js";
+import jwt from 'jsonwebtoken'
 
 async function registerUser(req, res) {
 
@@ -145,47 +146,213 @@ async function loginUser(req, res) {
 
 async function logoutUser(req, res) {
 
-  await UserModel.findByIdAndUpdate(
-    req.user?._id,
-    {
-      $set: {
-        refreshToken: 1
-      }
-    },
-    { new: true })
+  try {
+    await UserModel.findByIdAndUpdate(
+      req.user?._id,
+      {
+        $set: {
+          refreshToken: null
+        }
+      },
+      { new: true })
 
-  const cookieOptions = {
-    httpOnly: true,
-    secure: true
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true
+    }
+
+    return res
+      .status(200)
+      .clearCookie("accessToken", cookieOptions)
+      .clearCookie("refreshToken", cookieOptions)
+      .json(
+        new ApiResponse(200, {}, "User logout successfully")
+      )
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ success: false, error: error.message })
   }
-
-  return res
-    .status(200)
-    .clearCookie("accessToken", cookieOptions)
-    .clearCookie("refreshToken", cookieOptions)
-    .json(
-      new ApiResponse(200, {}, "User logout successfully")
-    )
 }
 
 async function currentUser(req, res) {
 
-  const accessToken = req.cookies?.accessToken;
-  const user = await UserModel.findById(req.user?._id).select("-password -refreshToken")
+  try {
+    const accessToken = req.cookies?.accessToken;
+    const user = await UserModel.findById(req.user?._id).select("-password -refreshToken")
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, {
-        user,
-        accessToken
-      }, "User details fetched successfully")
-    )
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, {
+          user,
+          accessToken
+        }, "User details fetched successfully")
+      )
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ success: false, error: error.message })
+  }
+}
+
+async function changeCurrentPassword(req, res) {
+
+  try {
+    const { oldPassword, newPassword, confirmPassword } = req.body
+
+    if (!newPassword || !confirmPassword || !oldPassword) {
+      throw new ApiError(400, "All field are required")
+    }
+    if (oldPassword === newPassword) {
+      throw new ApiError(400, "New password should be diffrent from old passowrd")
+    }
+    if (newPassword.length < 5) {
+      throw new ApiError(400, "New password must be more than 5 character")
+    }
+    if (newPassword !== confirmPassword) {
+      throw new ApiError(400, "Password does not match")
+    }
+
+    const user = await UserModel.findById(req.user._id);
+
+    if (!user) {
+      throw new ApiError(400, "User does not exists")
+    }
+
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+    if (!isPasswordCorrect) {
+      throw new ApiError(400, "Wrong password");
+    }
+
+    user.password = newPassword
+    await user.save({
+    }, { validateBeforeSave: false })
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, {}, "Password Changed successfully")
+      )
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ success: false, error: error.message })
+  }
+
+}
+
+async function updateAvatar(req, res) {
+  try {
+    const avatarLocalPath = req.file.path
+
+    if (!avatarLocalPath) {
+      throw new ApiError(400, "Avatar localpath is required")
+    }
+
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    if (!avatar) {
+      throw new ApiError(400, "Failed to upload avatar")
+    }
+
+    const user = await UserModel.findById(req.user._id);
+
+    if (!user) {
+      throw new ApiError(400, "User not found")
+    };
+
+    user.avatar = avatar.url;
+    await user.save();
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, {
+          avatar: avatar.url
+        }, "Avatar updated successfully")
+      )
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ success: false, error: error.message })
+  }
+}
+
+async function updateAccount(req, res) {
+
+  try {
+    const { username, fullname } = req.body
+
+    if (!fullname && !username) throw new ApiError(400, "At least one field is requied")
+    if (username && username.length < 6) throw new ApiError(400, "Username must be more than 6 character");
+
+    const user = await UserModel.findById(req.user._id).select("-password -refreshToken");
+
+    if (!user) {
+      throw new ApiError(400, "User does not found")
+    }
+
+    if (username) user.username = username;
+    if (fullname) user.fullname = fullname;
+    await user.save();
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, user, "Account details updated successfully")
+      )
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ success: false, error: error.message })
+  }
+}
+
+async function refreshAccessToken(req, res) {
+
+  try {
+    const refreshToken = req.cookies.refreshToken
+
+    if (!refreshToken) {
+      throw new ApiError(400, "Unauthorized request")
+    }
+
+    const decordedToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await UserModel.findById(decordedToken._id);
+
+    if (!user) {
+      throw new ApiError(401, "invalid refresh token")
+    }
+    if (refreshToken !== user.refreshToken) {
+      throw new ApiError(401, "invalid refresh token")
+    }
+
+    const newAccessToken = user.generateAccessToken();
+    const newRefreshToken = user.generateRefreshToken();
+
+    user.refreshToken = newRefreshToken;
+    await user.save({ validateBeforeSave: false })
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true
+    };
+
+    return res
+      .status(200)
+      .cookie("accessToken", newAccessToken, cookieOptions)
+      .cookie("refreshToken", newRefreshToken, cookieOptions)
+      .json(
+        new ApiResponse(200, {
+          newAccessToken,
+          newRefreshToken
+        }, "New access and refresh token generated successfully")
+      )
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, error: error.message });
+  }
 }
 
 export {
   registerUser,
   loginUser,
   logoutUser,
-  currentUser
+  currentUser,
+  changeCurrentPassword,
+  updateAvatar,
+  updateAccount,
+  refreshAccessToken
 }

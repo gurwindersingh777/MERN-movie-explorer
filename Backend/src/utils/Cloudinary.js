@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from 'cloudinary'
 import fs from 'fs'
+import ApiError from './ApiError.js';
 
 async function uploadOnCloudinary(localFilePath) {
 
@@ -21,6 +22,15 @@ async function uploadOnCloudinary(localFilePath) {
   }
 }
 
+async function deleteFromCloudinary(public_id) {
+  try {
+    await cloudinary.uploader.destroy(public_id)
+  } catch (error) {
+    throw ApiError(500, "Failed to delete file");
+  }
+}
+
 export {
-  uploadOnCloudinary
+  uploadOnCloudinary,
+  deleteFromCloudinary
 }
