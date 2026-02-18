@@ -76,7 +76,7 @@ async function registerUser(req, res) {
       .cookie("accessToken", accessToken, cookieOptions)
       .cookie("refreshToken", refreshToken, cookieOptions)
       .json(
-        new ApiResponse(201, { user: { loggedInUser, accessToken } }, "User registed successfully ")
+        new ApiResponse(201, { user: { loggedInUser, accessToken, refreshToken } }, "User registed successfully ")
       )
 
 
@@ -114,6 +114,7 @@ async function loginUser(req, res) {
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
+    user.save({ validateBeforeSave: false })
 
     const loggedInUser = await UserModel.findById(user._id).select("-password -refreshToken");
 
@@ -135,6 +136,7 @@ async function loginUser(req, res) {
           user: {
             loggedInUser,
             accessToken,
+            refreshToken
           }
         },
           "user login successfully")
@@ -316,6 +318,9 @@ async function refreshAccessToken(req, res) {
     if (!user) {
       throw new ApiError(401, "invalid refresh token")
     }
+    console.log(refreshToken);
+    console.log(user.refreshToken);
+
     if (refreshToken !== user.refreshToken) {
       throw new ApiError(401, "invalid refresh token")
     }

@@ -10,7 +10,9 @@ app.use(cookieParser());
 
 // Routes
 import userRouter from './routes/user.routes.js';
+import mediaRouter from './routes/media.routes.js'
 
 app.use("/api/v1/users", userRouter)  // https://localhost:4000/api/v1/users
+app.use("/api/v1/media", mediaRouter)
 
 export default app;
