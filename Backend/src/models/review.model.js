@@ -1,7 +1,7 @@
 import mongoose, { model } from "mongoose";
 
 const reviewSchema = new mongoose.Schema({
-  user: {
+  userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -21,6 +21,6 @@ const reviewSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-reviewSchema.index({ user: 1, tmdbID: 1 }, { unique: true })
+reviewSchema.index({ userID: 1, tmdbID: 1 }, { unique: true })
 
 export const ReviewModel = mongoose.model("Review", reviewSchema)

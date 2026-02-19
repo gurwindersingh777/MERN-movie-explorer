@@ -10,13 +10,13 @@ const favoriteSchema = new mongoose.Schema({
     enum: ["movie", "tv"],
     required: true
   },
-  user: {
+  userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   }
 }, { timestamps: true });
 
-favoriteSchema.index({ user: 1, tmdbID: 1 }, { unique: true })
+favoriteSchema.index({ userID: 1, tmdbID: 1 }, { unique: true })
 
 export const FavoriteModel = mongoose.model("Favorite", favoriteSchema);

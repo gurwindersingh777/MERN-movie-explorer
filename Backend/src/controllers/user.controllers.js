@@ -36,7 +36,7 @@ async function registerUser(req, res) {
     }
     const usernameAlreadyExists = await UserModel.findOne({ username })
     if (usernameAlreadyExists) {
-      throw new ApiError(200, "Username already exists")
+      throw new ApiError(400, "Username already exists")
     }
 
     const avatarLocalPath = req.file?.path;
@@ -114,7 +114,7 @@ async function loginUser(req, res) {
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
-    user.save({ validateBeforeSave: false })
+    await user.save({ validateBeforeSave: false })
 
     const loggedInUser = await UserModel.findById(user._id).select("-password -refreshToken");
 
