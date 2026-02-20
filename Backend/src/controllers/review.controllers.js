@@ -80,7 +80,7 @@ async function deleteReview(req, res) {
   }
 }
 
-async function getReview(req, res) {
+async function getMediaMyReview(req, res) {
   try {
 
     const tmdbID = req.params.tmdbID
@@ -104,7 +104,7 @@ async function getReview(req, res) {
   }
 }
 
-async function getMyReview(req, res) {
+async function getMyAllReview(req, res) {
   try {
     const result = await ReviewModel.find(
       { userID: req.user._id }
@@ -124,7 +124,7 @@ async function getMyReview(req, res) {
   }
 }
 
-async function getAllReview(req, res) {
+async function getMediaAllReview(req, res) {
   try {
     const media_type = req.params.media_type
     const tmdbID = req.params.tmdbID
@@ -151,7 +151,7 @@ export {
   addReview,
   updateReview,
   deleteReview,
-  getReview,
-  getMyReview,
-  getAllReview
+  getMediaMyReview,
+  getMyAllReview,
+  getMediaAllReview
 }

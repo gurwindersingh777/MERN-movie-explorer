@@ -62,50 +62,6 @@ async function updateRating(req, res) {
   }
 }
 
-async function getRating(req, res) {
-  try {
-
-    const tmdbID = req.params.tmdbID
-    const media_type = req.params.media_type
-
-    const result = await RatingModel.findOne(
-      { media_type: media_type, tmdbID: tmdbID, userID: req.user._id },
-    )
-
-    if (!result) {
-      throw new ApiError(400, "Rating does not exists")
-    }
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, result, "Rating fetched successfully")
-      )
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({ success: false, error: error.message })
-  }
-}
-
-async function getMyRating(req, res) {
-  try {
-    const result = await RatingModel.find(
-      { userID: req.user._id }
-    )
-
-    if (!result) {
-      throw new ApiError(400, "Rating does not exists")
-    }
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, result, "User all ratings fetched successfully")
-      )
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({ success: false, error: error.message })
-  }
-}
-
 async function removeRating(req, res) {
   try {
     const id = req.params.id
@@ -128,11 +84,57 @@ async function removeRating(req, res) {
   }
 }
 
+async function getMediaMyRating(req, res) {
+  try {
+
+    const tmdbID = req.params.tmdbID
+    const media_type = req.params.media_type
+    
+    const result = await RatingModel.findOne(
+      { media_type: media_type, tmdbID: tmdbID, userID: req.user._id },
+    )
+
+    if (!result) {
+      throw new ApiError(400, "Rating does not exists")
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, result, "Rating fetched successfully")
+      )
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, error: error.message })
+  }
+}
+
+async function getMyAllRating(req, res) {
+  try {
+    const result = await RatingModel.find(
+      { userID: req.user._id }
+    )
+
+    if (!result) {
+      throw new ApiError(400, "Rating does not exists")
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, result, "User all ratings fetched successfully")
+      )
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, error: error.message })
+  }
+}
+
+
+
 
 export {
   addRating,
   updateRating,
-  getRating,
-  getMyRating,
+  getMediaMyRating,
+  getMyAllRating,
   removeRating
 }
