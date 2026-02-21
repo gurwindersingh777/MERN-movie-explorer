@@ -7,11 +7,8 @@ import jwt from 'jsonwebtoken'
 async function registerUser(req, res) {
 
   try {
-    const { fullname, username, email, password } = req.body;
+    const { username, email, password } = req.body;
 
-    if (fullname && fullname.length < 5) {
-      throw new ApiError(400, "Fullname must be more than 5 characters")
-    }
     if (!username || (username.trim() === "")) {
       throw new ApiError(400, "Username is required")
     }
@@ -25,7 +22,7 @@ async function registerUser(req, res) {
       throw new ApiError(400, "invalid email")
     }
     if (!password || (password.trim() === "")) {
-      throw new ApiError(400, "password is required")
+      throw new ApiError(400, "Password is required")
     }
     if (password.length < 6) {
       throw new ApiError(400, "Password must be more than 6 characters")
@@ -40,7 +37,6 @@ async function registerUser(req, res) {
     }
 
     let createdUser = await UserModel.create({
-      fullname: fullname || "",
       username: username,
       email: email,
       password: password,
@@ -79,26 +75,27 @@ async function registerUser(req, res) {
 
 async function loginUser(req, res) {
   try {
+
     const { email, password } = req.body;
 
     if (!email || !email.includes("@")) {
-      throw new ApiError(400, "enter a valid emial");
+      throw new ApiError(400, "Enter a valid emial");
     }
 
     if (!password.trim()) {
       throw new ApiError(400, "Password is required");
     }
 
-    let user = await UserModel.findOne({ email })
+    let user = await UserModel.findOne({ email });
 
     if (!user) {
-      throw new ApiError(404, "User does not exists");
+      throw new ApiError(401, "Invalid email");
     }
 
     const isPasswordCorrect = await user.isPasswordCorrect(password);
 
     if (!isPasswordCorrect) {
-      throw new ApiError(404, "Wrong password")
+      throw new ApiError(401, "Wrong password");
     }
 
     const accessToken = user.generateAccessToken();
@@ -110,7 +107,7 @@ async function loginUser(req, res) {
     user = await UserModel.findById(user._id).select("-password -refreshToken");
 
     if (!user) {
-      throw new ApiError(400, "Failed to login user")
+      throw new ApiError(400, "Failed to Login")
     }
 
     const cookieOptions = {
@@ -262,10 +259,10 @@ async function updateAccount(req, res) {
       throw new ApiError(400, "Username must be more than 6 character")
     };
 
-    const usernameExists = await UserModel.findOne({username});
+    const usernameExists = await UserModel.findOne({ username });
 
-    if(usernameExists){
-      throw new ApiError(400,"Username already taken")
+    if (usernameExists) {
+      throw new ApiError(400, "Username already taken")
     }
 
     const user = await UserModel.findById(req.user._id).select("-password -refreshToken");
