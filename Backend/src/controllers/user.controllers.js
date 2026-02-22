@@ -62,8 +62,9 @@ async function registerUser(req, res) {
     return res
       .status(201)
       .cookie("refreshToken", refreshToken, cookieOptions)
+      .cookie("accessToken", accessToken, cookieOptions)
       .json(
-        new ApiResponse(201, { user, accessToken }, "User registered successfully")
+        new ApiResponse(201, { user }, "User registered successfully")
       )
 
 
@@ -118,8 +119,9 @@ async function loginUser(req, res) {
     return res
       .status(200)
       .cookie("refreshToken", refreshToken, cookieOptions)
+      .cookie("accessToken", accessToken, cookieOptions)
       .json(
-        new ApiResponse(200, { user, accessToken }, "User login successfully")
+        new ApiResponse(200, { user }, "User login successfully")
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })
@@ -146,6 +148,7 @@ async function logoutUser(req, res) {
     return res
       .status(200)
       .clearCookie("refreshToken", cookieOptions)
+      .clearCookie("accessToken", cookieOptions)
       .json(
         new ApiResponse(200, {}, "User logout successfully")
       )

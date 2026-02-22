@@ -1,45 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useAuthStore } from "../store/authStore.js";
-import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "../services/authService.js";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "react-toastify";
-
-const loginSchema = z.object({
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+import { loginSchema } from "../schema/authSchema";
+import { useLogin } from "../hooks/useAuth";
 
 export default function Login() {
-  const setUser = useAuthStore((state) => state.setUser);
-  const navigate = useNavigate();
-
+  const { mutate, isPending } = useLogin();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(loginSchema) });
 
-  const mutation = useMutation({
-    mutationFn: loginUser,
-    onSuccess: (data) => {
-      const { accessToken, user } = data;
-      localStorage.setItem("accessToken", accessToken);
-      setUser(user);
-      navigate("/");
-      toast.success("Login Successfully");
-    },
-    onError: (error) => {
-      toast.error(error.response?.data.error);
-    },
-  });
-
-  function onSubmit(data) {
-    mutation.mutate(data);
-  }
   return (
     <div className=" w-screen h-screen flex justify-center items-center p-10">
       <div className="flex h-full w-100  justify-between  flex-col rounded-3xl  border border-neutral-700  p-10">
@@ -50,7 +22,7 @@ export default function Login() {
         <h1 className="mt-6  text-3xl font-bold mb-10">Login now</h1>
 
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(mutate)}
           className="flex flex-col gap-5 mb-10 "
         >
           {/* Email */}
@@ -103,11 +75,14 @@ export default function Login() {
             />
           </div>
           <button
-            disabled={mutation.isPending}
-            text={`${mutation.isPending ? "Logging..." : "Log in"}`}
+            disabled={isPending}
             className="flex items-center justify-center h-10 w-full  text-sm border font-medium border-neutral-500   rounded-md transition bg-blue-700 hover:bg-blue-800"
           >
-            Log in
+            {isPending ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              "Log in"
+            )}
           </button>
           <Link className="text-center text-xs text-neutral-300">
             Forget password?
