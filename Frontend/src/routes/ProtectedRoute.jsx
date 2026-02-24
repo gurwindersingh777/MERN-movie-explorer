@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useCurrentUser } from "../hooks/useAuth";
-import { Spinner } from "../components/Component";
+import { Spinner } from "@/components/ui/spinner";
+
 
 
 export default function ProtectedRoute({ children }) {

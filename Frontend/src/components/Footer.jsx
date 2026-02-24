@@ -1,7 +1,4 @@
-import { FaInstagram } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import { FaLinkedin } from "react-icons/fa";
-import { FaFacebook } from "react-icons/fa";
+import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -14,7 +11,7 @@ export default function Footer() {
           <li>
             <div className="flex gap-2 text-[12px] items-center cursor-pointer">
               <span className="text-[18px]">
-                <FaInstagram />
+               <Instagram size={18} />
               </span>
               Instagram
             </div>
@@ -22,7 +19,7 @@ export default function Footer() {
           <li>
             <div className="flex gap-2 text-[12px] items-center cursor-pointer">
               <span className="text-[18px]">
-                <FaXTwitter />
+                <Twitter size={18} />
               </span>
               Twitter
             </div>
@@ -30,7 +27,7 @@ export default function Footer() {
           <li>
             <div className="flex gap-2 text-[12px] items-center cursor-pointer">
               <span className="text-[18px]">
-                <FaLinkedin />
+                <Linkedin size={18} />
               </span>
               LinkedIn
             </div>
@@ -38,7 +35,7 @@ export default function Footer() {
           <li>
             <div className="flex gap-2 text-[12px] items-center cursor-pointer">
               <span className="text-[18px]">
-                <FaFacebook />
+                <Facebook size={18} />
               </span>
               Facebook
             </div>

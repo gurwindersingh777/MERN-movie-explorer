@@ -5,8 +5,8 @@ import { useCategory, useTrending } from "../hooks/useMedia";
 export default function Home() {
   return (
     <>
-    <Hero query={useTrending("movie", "day")}/>
-    <div className="flex flex-col gap-8 w-full p-20 py-15">
+    <div className="flex flex-col gap-19 w-full px-20 pt-10 pb-40">
+      <Hero query={useTrending("movie", "day")}/>
       <Wrapper title="Trending Today" query={useTrending("movie", "day")} />
       <Wrapper title="Trending This Week" query={useTrending("movie", "week")} />
       <Wrapper title="Popular Movies" query={useCategory("movie", "popular")} />

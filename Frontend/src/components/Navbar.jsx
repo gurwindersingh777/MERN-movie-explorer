@@ -1,16 +1,33 @@
 import { Link } from "react-router-dom";
-import { LuSearch } from "react-icons/lu";
-import { AccountNavbarBtn, LoginAndSignupBtn } from "./Component.jsx";
-import { useCurrentUser } from "../hooks/useAuth.js";
+import { LoginAndSignupBtn } from "./Component.jsx";
+import { useCurrentUser, useLogout } from "../hooks/useAuth.js";
+import { CircleUser, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
 
 export default function Navbar() {
   const { data } = useCurrentUser();
 
+  const { mutate, isPending } = useLogout();
+
+  function handleLogout() {
+    mutate();
+  }
+
   return (
-    <nav className="w-full h-18 flex justify-between items-center px-15 border-b border-neutral-800">
+    <nav className="w-full  h-16 flex justify-between sticky top-0 z-20 items-center px-15 border-b bg-[#111111] border-neutral-800">
       <div className="flex gap-10 items-center">
-        <div className="font-bold text-lg">Movie Explorer</div>
-        <div className="text-[13px] flex gap-4 mt-1 text-neutral-300">
+        <div className=" font-mono tracking-wide text-red-400 text-xl ">Movie Explorer</div>
+        <div className="text-[13px] font-semibold flex gap-4  text-neutral-300">
           <Link to="/" className="hover:text-white ">
             Home
           </Link>
@@ -29,22 +46,41 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-5">
-        <div className="flex items-center justify-center h-8 w-70">
-          <input
-            type="text"
-            id="search"
-            placeholder="Search any movie and TV show"
-            className="border border-neutral-600  bg-neutral-800 text-white placeholder:text-neutral-400  text-xs h-full w-full px-4   "
+        <Field className="gap-1.5" orientation="horizontal">
+          <Input
+            className="w-70 "
+            type="search"
+            placeholder="Search any Movie and TV show"
           />
-          <label
-            htmlFor="search"
-            className="border ml-0.5 flex items-center bg-neutral-200 hover:bg-white  text-black px-2 pr-3  h-full  cursor-pointer"
-          >
-            <LuSearch />
-          </label>
-        </div>
+          <Button  size="icon-sm" >
+            <Search  />
+          </Button>
+        </Field>
+
         {data?.user ? (
-          <AccountNavbarBtn username={data.user.username} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" variant="outline">
+                <CircleUser />
+                {data?.user.username}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <UserIcon />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <SettingsIcon />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} variant="destructive">
+                <LogOutIcon />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <LoginAndSignupBtn />
         )}

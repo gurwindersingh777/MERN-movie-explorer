@@ -1,7 +1,7 @@
 import { getCurrentUser, loginUser, logoutUser, registerUser } from "../services/authService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export function useCurrentUser() {
   return useQuery({

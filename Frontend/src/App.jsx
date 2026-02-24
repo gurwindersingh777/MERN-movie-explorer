@@ -4,9 +4,10 @@ import Login from "./pages/Login";
 import NormalLayout from "./layouts/NormalLayout";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
-import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
+import { Toaster } from "./components/ui/sonner";
+import MediaDetails from "./pages/MediaDetails";
 
 function App() {
 
@@ -17,7 +18,8 @@ function App() {
 
           {/* Protected routes */}
             <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>      
-              <Route path="/" element={<Home />} />        
+              <Route path="/" element={<Home />} />   
+              <Route path="/media-details/:tmdbID" element={<MediaDetails/>} /> 
             </Route>
 
           {/* Public routes */}          
@@ -28,7 +30,7 @@ function App() {
 
         </Routes>     
       </BrowserRouter>
-      <ToastContainer theme="dark" />
+      <Toaster/>
     </>
   );
 }
