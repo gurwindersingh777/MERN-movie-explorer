@@ -10,10 +10,13 @@ const tmdb = axios.create({
 })
 
 async function getCategory(media_type, category, page) {
-  
+
   try {
     const response = await tmdb.get(`/${media_type}/${category}`, { params: { page } });
-    return response?.data
+    const data = response.data;
+    return {
+      ...data, results: data.results.map(item => ({ ...item, media_type }))
+    }
   } catch (error) {
     throw new ApiError(400, `Failed to get ${category} from tmdb`)
   }
@@ -21,18 +24,22 @@ async function getCategory(media_type, category, page) {
 
 async function getDetails(media_type, id) {
   try {
-    const response = await tmdb.get(`/${media_type}/${id}`);
-    return response?.data
+    const response = await tmdb.get(`/${media_type}/${id}`, {
+      params: {
+        append_to_response:
+          "videos,credits,similar,recommendations,reviews,watch/providers"
+      }
+    });
+    return response.data
   } catch (error) {
     throw new ApiError(400, "Failed to get details from tmdb")
   }
 }
 
-async function getSearch(search_type, query) {
-  console.log(search_type, query);
+async function getSearch(query) {
 
   try {
-    const response = await tmdb.get(`/search/${search_type}`, { params: { query } });
+    const response = await tmdb.get(`/search/multi`, { params: { query } });
     return response?.data
   } catch (error) {
     throw new ApiError(400, "Failed to get Search from tmdb")
@@ -61,7 +68,10 @@ async function getVideos(media_type, id) {
 async function getSimilar(media_type, id) {
   try {
     const response = await tmdb.get(`/${media_type}/${id}/similar`);
-    return response?.data
+    const data = response.data;
+    return {
+      ...data, results: data.results.map(item => ({ ...item, media_type }))
+    }
   } catch (error) {
     throw new ApiError(400, "Failed to get similar from tmdb")
   }
@@ -70,7 +80,10 @@ async function getSimilar(media_type, id) {
 async function getRecommendations(media_type, id) {
   try {
     const response = await tmdb.get(`/${media_type}/${id}/recommendations`);
-    return response?.data
+    const data = response.data;
+    return {
+      ...data, results: data.results.map(item => ({ ...item, media_type }))
+    }
   } catch (error) {
     throw new ApiError(400, "Failed to get similar from tmdb")
   }
@@ -79,18 +92,20 @@ async function getRecommendations(media_type, id) {
 async function getDiscover(media_type, filter) {
 
   try {
-    const response = await tmdb.get(`/discover/${media_type} `, { params: filter });
-    return response?.data
+    const response = await tmdb.get(`/discover/${media_type}`, { params: filter });
+    const data = response.data;
+    return {
+      ...data, results: data.results.map(item => ({ ...item, media_type }))
+    }
   } catch (error) {
     throw new ApiError(400, "Failed to get similar from tmdb")
   }
 }
 
-async function getTrending(media_type, time_window) {
-
+async function getTrending(time_window) {
 
   try {
-    const response = await tmdb.get(`/trending/${media_type}/${time_window}`);
+    const response = await tmdb.get(`/trending/all/${time_window}`);
     return response?.data
   } catch (error) {
     throw new ApiError(400, "Failed to get trending from tmdb")
@@ -99,7 +114,7 @@ async function getTrending(media_type, time_window) {
 
 async function getGenre(media_type) {
   try {
-    const response = await tmdb.get(`/genre/${media_type}/list `);
+    const response = await tmdb.get(`/genre/${media_type}/list`);
     return response?.data
   } catch (error) {
     throw new ApiError(400, "Failed to get genre from tmdb")
@@ -108,17 +123,17 @@ async function getGenre(media_type) {
 
 async function getWatchProviders(media_type, id) {
 
-  try {    
-    const response = await tmdb.get(`/${media_type}/${id}/watch/providers `);
+  try {
+    const response = await tmdb.get(`/${media_type}/${id}/watch/providers`);
     return response?.data
   } catch (error) {
     throw new ApiError(400, "Failed to get genre from tmdb")
   }
 }
 
-async function getReviews(media_type , id) {
-  try {   
-    const response = await tmdb.get(`/${media_type}/${id}/reviews `);
+async function getReviews(media_type, id) {
+  try {
+    const response = await tmdb.get(`/${media_type}/${id}/reviews`);
     return response?.data
   } catch (error) {
     throw new ApiError(400, "Failed to get genre from tmdb")

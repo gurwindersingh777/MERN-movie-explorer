@@ -4,22 +4,22 @@ import { Button } from "./ui/button";
 import { Spinner } from "./ui/spinner";
 
 export default function Hero({ query }) {
-  const { data, isPending, isError } = query;
-
+  const { data, isPending, isError, refetch } = query;
+  
   const media = data?.results[0];
   const background = `https://image.tmdb.org/t/p/original${media?.backdrop_path}`;
 
   if (isPending)
     return (
       <div className="w-full h-50  flex justify-center items-center text-xs">
-        <Spinner/>
+        <Spinner />
       </div>
     );
   if (isError) {
     refetch;
     return (
       <div className="w-full h-50  flex justify-center items-center text-xs text-neutral-400">
-        <p>Something went wrong while loading : {title}</p>
+        <p>Something went wrong</p>
       </div>
     );
   }

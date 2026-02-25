@@ -19,7 +19,7 @@ function App() {
           {/* Protected routes */}
             <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>      
               <Route path="/" element={<Home />} />   
-              <Route path="/media-details/:tmdbID" element={<MediaDetails/>} /> 
+              <Route path="/media-details/:media_type/:id" element={<MediaDetails/>} /> 
             </Route>
 
           {/* Public routes */}          

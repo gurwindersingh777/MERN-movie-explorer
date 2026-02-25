@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { LoginAndSignupBtn } from "./Component.jsx";
 import { useCurrentUser, useLogout } from "../hooks/useAuth.js";
-import { CircleUser, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -12,7 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
+import {
+  LogOutIcon,
+  SettingsIcon,
+  UserIcon,
+  CircleUser,
+  SearchIcon,
+} from "lucide-react";
 
 export default function Navbar() {
   const { data } = useCurrentUser();
@@ -26,7 +31,9 @@ export default function Navbar() {
   return (
     <nav className="w-full  h-16 flex justify-between sticky top-0 z-20 items-center px-15 border-b bg-[#111111] border-neutral-800">
       <div className="flex gap-10 items-center">
-        <div className=" font-mono tracking-wide text-red-400 text-xl ">Movie Explorer</div>
+        <div className=" font-mono tracking-wide text-red-400 text-xl ">
+          Movie Explorer
+        </div>
         <div className="text-[13px] font-semibold flex gap-4  text-neutral-300">
           <Link to="/" className="hover:text-white ">
             Home
@@ -46,16 +53,12 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-5">
-        <Field className="gap-1.5" orientation="horizontal">
-          <Input
-            className="w-70 "
-            type="search"
-            placeholder="Search any Movie and TV show"
-          />
-          <Button  size="icon-sm" >
-            <Search  />
+        <ButtonGroup >
+          <Input className="w-70 " placeholder="Search for any Movie and TV shows" />
+          <Button variant="outline" aria-label="Search">
+            <SearchIcon />
           </Button>
-        </Field>
+        </ButtonGroup>
 
         {data?.user ? (
           <DropdownMenu>

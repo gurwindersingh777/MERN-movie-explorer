@@ -1,6 +1,7 @@
-import { ChevronRight } from "lucide-react";
+import { ArrowUpRightIcon } from "lucide-react";
 import MediaCard from "./MediaCard";
-import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Link } from "react-router-dom";
 
 export default function MediaRow({ data, title }) {
   return (
@@ -14,10 +15,11 @@ export default function MediaRow({ data, title }) {
             {data?.map((element) => (
               <MediaCard data={element} key={element.id} />
             ))}
-            <Button  variant="outline">
-              More
-              <ChevronRight />
-            </Button>
+            <Badge asChild>
+              <Link >
+                More <ArrowUpRightIcon data-icon="inline-end" />
+              </Link>
+            </Badge>
           </div>
         </>
       )}
