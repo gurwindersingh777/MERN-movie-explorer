@@ -5,8 +5,8 @@ import { toast } from "sonner";
 
 export function useCurrentUser() {
   return useQuery({
-    queryKey: ["currentUser"],
     queryFn: getCurrentUser,
+    queryKey: ["currentUser"],
     retry: false,
   });
 }

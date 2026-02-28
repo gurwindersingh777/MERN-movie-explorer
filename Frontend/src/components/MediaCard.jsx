@@ -4,7 +4,8 @@ export default function MediaCard({ data }) {
   const navigate = useNavigate();
 
   function onPosterClick() {
-    navigate(`/media-details/${data?.media_type}/${data?.id}`);
+    const type = data.first_air_date ? "tv" : "movie";
+    navigate(`/media-details/${data?.media_type || type}/${data?.id}`);
   }
   return (
     <>

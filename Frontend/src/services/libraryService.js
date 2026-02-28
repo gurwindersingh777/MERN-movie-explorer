@@ -7,8 +7,8 @@ export async function addToWatchlater(data) {
   return res.data.data;
 }
 
-export async function getWatchlater() {
-  const res = await api.get("/watchlater");
+export async function getMediaWatchlater(id) {
+  const res = await api.get(`/watchlater/${id}`);
   return res.data.data;
 }
 

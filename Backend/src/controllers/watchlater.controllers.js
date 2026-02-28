@@ -28,7 +28,7 @@ async function addToWatchlater(req, res) {
     })
 
     if (!watchlater) {
-      throw new ApiError(400, "Failed to create watchlater")
+      throw new ApiError(400, "Failed to add in watchlaters")
     }
 
     return res
@@ -42,6 +42,26 @@ async function addToWatchlater(req, res) {
 }
 
 async function getWatchlater(req, res) {
+  try {
+    const tmdbID = req.params.id
+    
+    const watchlaterExists = await WatchlaterModel.findOne({  tmdbID: tmdbID, userID: req.user._id })
+
+    if (!watchlaterExists) {
+      throw new ApiError(400, "Failed to get watchalater")
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, watchlaterExists, "Watchlater fetched successfully")
+      )
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, error: error.message })
+  }
+}
+
+async function getAllWatchlater(req, res) {
   try {
     const watchlaterList = await WatchlaterModel.find({ userID: req.user._id })
 
@@ -81,5 +101,6 @@ async function removeFromWatchlater(req, res) {
 export {
   addToWatchlater,
   getWatchlater,
-  removeFromWatchlater
+  removeFromWatchlater,
+  getAllWatchlater
 }

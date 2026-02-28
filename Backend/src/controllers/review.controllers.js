@@ -4,9 +4,12 @@ import ApiResponse from "../utils/ApiResponse.js"
 
 async function addReview(req, res) {
   try {
-    const { tmdbID, media_type, content } = req.body
+    const { tmdbID, media_type, content , rating } = req.body
 
     if (!content) {
+      throw new ApiError(400, "Content is required")
+    }
+    if (!rating) {
       throw new ApiError(400, "Content is required")
     }
 
@@ -20,6 +23,7 @@ async function addReview(req, res) {
       tmdbID: tmdbID,
       media_type: media_type,
       content: content,
+      rating : rating,
       userID: req.user._id
     });
 
@@ -86,18 +90,18 @@ async function getMediaMyReview(req, res) {
     const tmdbID = req.params.tmdbID
     const media_type = req.params.media_type
 
-    const result = await ReviewModel.findOne(
+    const review = await ReviewModel.findOne(
       { media_type: media_type, tmdbID: tmdbID, userID: req.user._id },
     )
 
-    if (!result) {
+    if (!review) {
       throw new ApiError(400, "Review does not exists")
     }
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, result, "Review fetched successfully")
+        new ApiResponse(200, review, "Review fetched successfully")
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })
