@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginAndSignupBtn } from "./Component.jsx";
 import { useCurrentUser, useLogout } from "../hooks/useAuth.js";
 import { Button } from "@/components/ui/button";
@@ -18,14 +18,19 @@ import {
   CircleUser,
   SearchIcon,
 } from "lucide-react";
+import { Spinner } from "./ui/spinner.jsx";
+import { useState } from "react";
 
 export default function Navbar() {
   const { data } = useCurrentUser();
 
   const { mutate, isPending } = useLogout();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
 
-  function handleLogout() {
-    mutate();
+  function handleSearch() {
+    if (search.trim().length === 0) return;
+    navigate(`/search/${search}`);
   }
 
   return (
@@ -52,10 +57,16 @@ export default function Navbar() {
           </Link>
         </div>
       </div>
+
       <div className="flex items-center gap-5">
-        <ButtonGroup >
-          <Input className="w-70 " placeholder="Search for any Movie and TV shows" />
-          <Button variant="outline" aria-label="Search">
+        <ButtonGroup>
+          <Input
+            className="w-70 "
+            placeholder="Search for any Movie and TV shows"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button variant="outline" aria-label="Search" onClick={handleSearch}>
             <SearchIcon />
           </Button>
         </ButtonGroup>
@@ -65,7 +76,7 @@ export default function Navbar() {
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="outline">
                 <CircleUser />
-                {data?.user.username}
+                {isPending ? <Spinner /> : data?.user.username}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -78,7 +89,7 @@ export default function Navbar() {
                 Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} variant="destructive">
+              <DropdownMenuItem onClick={() => mutate()} variant="destructive">
                 <LogOutIcon />
                 Log out
               </DropdownMenuItem>

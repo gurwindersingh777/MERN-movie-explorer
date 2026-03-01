@@ -8,6 +8,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import { Toaster } from "./components/ui/sonner";
 import MediaDetails from "./pages/MediaDetails";
+import Search from "./pages/Search";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
             <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>      
               <Route path="/" element={<Home />} />   
               <Route path="/media-details/:media_type/:id" element={<MediaDetails/>} /> 
+              <Route path="/search/:q" element={<Search/>} /> 
             </Route>
 
           {/* Public routes */}          

@@ -4,27 +4,28 @@ import ApiResponse from "../utils/ApiResponse.js"
 
 async function addReview(req, res) {
   try {
-    const { tmdbID, media_type, content , rating } = req.body
+
+    const { tmdbID, media_type, content, rating } = req.body
 
     if (!content) {
       throw new ApiError(400, "Content is required")
     }
-    if (!rating) {
-      throw new ApiError(400, "Content is required")
+    if (rating === null) {
+      throw new ApiError(400, "Rating is required")
     }
 
-    const alreadyExists = await ReviewModel.findOne({ tmdbID, media_type, userID: req.user._id });
+    const alreadyExists = await ReviewModel.findOne({ tmdbID, media_type, user: req.user._id });
 
     if (alreadyExists) {
-      throw new ApiError(400, "Already reviewed")
+      throw new ApiError(400, "You already reviewed this media");
     }
 
     const review = await ReviewModel.create({
       tmdbID: tmdbID,
       media_type: media_type,
       content: content,
-      rating : rating,
-      userID: req.user._id
+      rating: rating,
+      user: req.user._id
     });
 
     return res
@@ -40,17 +41,23 @@ async function addReview(req, res) {
 async function updateReview(req, res) {
   try {
     const { content } = req.body
-    const id = req.params.id
-
-    if (!content) {
-      throw new ApiError(400, "Content is required")
-    }
+    const { rating } = req.body
 
     const review = await ReviewModel.findOneAndUpdate(
-      { _id: id, userID: req.user._id },
-      { content: content }
+      {
+        _id: req.params.id,
+        user: req.user._id,
+      },
+      {
+        content,
+        rating
+      },
+      { new: true }
     )
 
+    if (!review) {
+      throw new ApiError(404, "Review not found");
+    }
 
     return res
       .status(200)
@@ -64,15 +71,12 @@ async function updateReview(req, res) {
 
 async function deleteReview(req, res) {
   try {
+
     const id = req.params.id
 
-    const result = await ReviewModel.findOneAndDelete(
-      { _id: id, userID: req.user._id },
+    await ReviewModel.findOneAndDelete(
+      { _id: id, user: req.user._id },
     )
-
-    if (!result) {
-      throw new ApiError(400, "Review does not exists")
-    }
 
     return res
       .status(200)
@@ -84,24 +88,25 @@ async function deleteReview(req, res) {
   }
 }
 
-async function getMediaMyReview(req, res) {
+async function getMediaReview(req, res) {
   try {
 
-    const tmdbID = req.params.tmdbID
-    const media_type = req.params.media_type
+    const myReview = await ReviewModel.findOne({
+      media_type: req.params.media_type,
+      tmdbID: req.params.tmdbID,
+      user: req.user._id
+    },).populate("user", "username avatar")
 
-    const review = await ReviewModel.findOne(
-      { media_type: media_type, tmdbID: tmdbID, userID: req.user._id },
-    )
-
-    if (!review) {
-      throw new ApiError(400, "Review does not exists")
-    }
+    const otherReviews = await ReviewModel.find({
+      media_type: req.params.media_type,
+      tmdbID: req.params.tmdbID,
+      user: { $ne: req.user._id }
+    }).populate("user", "username avatar")
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, review, "Review fetched successfully")
+        new ApiResponse(200, { myReview, otherReviews } || null, "Review fetched successfully")
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })
@@ -111,7 +116,7 @@ async function getMediaMyReview(req, res) {
 async function getMyAllReview(req, res) {
   try {
     const result = await ReviewModel.find(
-      { userID: req.user._id }
+      { user: req.user._id }
     )
 
     if (!result) {
@@ -128,34 +133,11 @@ async function getMyAllReview(req, res) {
   }
 }
 
-async function getMediaAllReview(req, res) {
-  try {
-    const media_type = req.params.media_type
-    const tmdbID = req.params.tmdbID
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
-    const skip = (page - 1) * limit
-
-    const review = await ReviewModel.find({ media_type, tmdbID }).limit(limit).skip(skip)
-
-    if (review.length === 0) {
-      throw new ApiError(400, "Review does not exists")
-    }
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, review, "All users reviews fetched successfully")
-      )
-  } catch (error) {
-    return res.status(error.statusCode || 500).json({ success: false, error: error.message })
-  }
-}
 
 export {
   addReview,
   updateReview,
   deleteReview,
-  getMediaMyReview,
+  getMediaReview,
   getMyAllReview,
-  getMediaAllReview
 }
