@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const searchhistorySchema = new mongoose.Schema({
-  userID: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -15,6 +15,6 @@ const searchhistorySchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-searchhistorySchema.index({ userID: 1, query: 1 }, { unique: true })
+searchhistorySchema.index({ user: 1, query: 1 }, { unique: true })
 
 export const SearchhistoryModel = mongoose.model("Searchhistory", searchhistorySchema);

@@ -16,7 +16,7 @@ import {
 
 const router = Router();
 
-router.get("/trending/:time_window", getMediaTrending);
+router.get("/trending/:media_type/:time_window", getMediaTrending);
 router.get("/multi/search", getMediaSearch);
 router.get("/:type/discover", getMediaDiscover);
 router.get("/:type/genres", getMediaGenre);

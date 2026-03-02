@@ -12,7 +12,6 @@ export default function Wrapper({ title, query }) {
       </div>
     );
   if (isError) {
-    refetch;
     return (
       <div className="w-full h-50  flex justify-center items-center text-xs text-neutral-400">
         <p>Something went wrong</p>

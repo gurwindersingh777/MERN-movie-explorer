@@ -10,8 +10,8 @@ export async function getMediaDiscover(media_type, filters = {}) {
   return res.data.data;
 }
 
-export async function getMediaTrending(time_window) {
-  const res = await api.get(`/media/trending/${time_window}`);
+export async function getMediaTrending(media_type, time_window) {
+  const res = await api.get(`/media/trending/${media_type}/${time_window}`);
   return res.data.data;
 }
 

@@ -1,9 +1,7 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { LoginAndSignupBtn } from "./Component.jsx";
 import { useCurrentUser, useLogout } from "../hooks/useAuth.js";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,22 +14,15 @@ import {
   SettingsIcon,
   UserIcon,
   CircleUser,
-  SearchIcon,
 } from "lucide-react";
 import { Spinner } from "./ui/spinner.jsx";
-import { useState } from "react";
+
+import NavSearch from "./NavSearch.jsx";
 
 export default function Navbar() {
-  const { data } = useCurrentUser();
-
-  const { mutate, isPending } = useLogout();
-  const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-
-  function handleSearch() {
-    if (search.trim().length === 0) return;
-    navigate(`/search/${search}`);
-  }
+  
+  const { data: user } = useCurrentUser();
+  const { mutate: logout, isPending } = useLogout();
 
   return (
     <nav className="w-full  h-16 flex justify-between sticky top-0 z-20 items-center px-15 border-b bg-[#111111] border-neutral-800">
@@ -59,24 +50,14 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-5">
-        <ButtonGroup>
-          <Input
-            className="w-70 "
-            placeholder="Search for any Movie and TV shows"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button variant="outline" aria-label="Search" onClick={handleSearch}>
-            <SearchIcon />
-          </Button>
-        </ButtonGroup>
+        <NavSearch/>
 
-        {data?.user ? (
+        {user?.user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="outline">
                 <CircleUser />
-                {isPending ? <Spinner /> : data?.user.username}
+                {isPending ? <Spinner /> : user?.user.username}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -89,7 +70,7 @@ export default function Navbar() {
                 Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => mutate()} variant="destructive">
+              <DropdownMenuItem onClick={() => logout()} variant="destructive">
                 <LogOutIcon />
                 Log out
               </DropdownMenuItem>

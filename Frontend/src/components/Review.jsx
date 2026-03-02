@@ -68,7 +68,7 @@ export default function Review({ reviews, media_type, tmdbID }) {
 
       <div className="flex flex-col gap-3 w-full ">
         {myReview && !editPanel ? (
-          <div className="flex flex-col gap-3 bg-neutral-7  00 p-5 rounded-lg">
+          <div className="flex flex-col gap-3 bg-neutral-700 p-5 rounded-lg">
             <div className="flex items-center justify-between border-b pb-3">
               <h1 className="text-sm">My Review</h1>
 

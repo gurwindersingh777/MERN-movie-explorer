@@ -9,6 +9,8 @@ import PublicRoute from "./routes/PublicRoute";
 import { Toaster } from "./components/ui/sonner";
 import MediaDetails from "./pages/MediaDetails";
 import Search from "./pages/Search";
+import Movies from "./pages/Movies";
+import TvShows from "./pages/TvShows";
 
 function App() {
 
@@ -20,6 +22,8 @@ function App() {
           {/* Protected routes */}
             <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>      
               <Route path="/" element={<Home />} />   
+              <Route path="/movies" element={<Movies />} />   
+              <Route path="/tv" element={<TvShows />} />   
               <Route path="/media-details/:media_type/:id" element={<MediaDetails/>} /> 
               <Route path="/search/:q" element={<Search/>} /> 
             </Route>

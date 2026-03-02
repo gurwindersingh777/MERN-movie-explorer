@@ -102,10 +102,16 @@ async function getDiscover(media_type, filter) {
   }
 }
 
-async function getTrending(time_window) {
+async function getTrending(media_type, time_window) {
 
   try {
-    const response = await tmdb.get(`/trending/all/${time_window}`);
+    const response = await tmdb.get(`/trending/${media_type}/${time_window}`);
+    if (media_type !== "all") {
+      const data = response.data;
+      return {
+        ...data, results: data.results.map(item => ({ ...item, media_type }))
+      }
+    }
     return response?.data
   } catch (error) {
     throw new ApiError(400, "Failed to get trending from tmdb")

@@ -2,31 +2,25 @@ import Hero from "../components/Hero";
 import Wrapper from "../components/Wrapper";
 import { useCategory, useTrending } from "../hooks/useMedia";
 
-export default function Home() {
-  const hero = useTrending("all", "day");
-  const trendingDay = useTrending("all", "day");
-  const trendingWeek = useTrending("all", "week");
+export default function Movies() {
+  const hero = useTrending("movie", "day");
+  const trendingDay = useTrending("movie", "day");
+  const trendingWeek = useTrending("movie", "week");
   const popularMovie = useCategory("movie", "popular");
-  const popularTv = useCategory("tv", "popular");
   const topRatedMovie = useCategory("movie", "top_rated");
   const upcomingMovie = useCategory("movie", "upcoming");
   const nowPlayingMovie = useCategory("movie", "now_playing");
-  const onTheAirTv = useCategory("tv", "on_the_air");
-  const airingToday = useCategory("tv", "airing_today");
 
   return (
     <>
       <div className="flex flex-col gap-10 w-full px-20 pt-10 pb-40">
         <Hero query={hero} />
-        <Wrapper title="Trending Today" query={trendingDay} />
-        <Wrapper title="Trending This Week" query={trendingWeek} />
+        <Wrapper title="Trending Movies Today" query={trendingDay} />
+        <Wrapper title="Trending Movies This Week" query={trendingWeek} />
         <Wrapper title="Popular Movies" query={popularMovie} />
-        <Wrapper title="Popular Tv Shows" query={popularTv} />
-        <Wrapper title="Top Rated" query={topRatedMovie} />
+        <Wrapper title="Top Rated Movies" query={topRatedMovie} />
         <Wrapper title="Upcoming Movies " query={upcomingMovie} />
         <Wrapper title="Now Playing" query={nowPlayingMovie} />
-        <Wrapper title="On the Air " query={onTheAirTv} />
-        <Wrapper title="Airing Today " query={airingToday} />
       </div>
     </>
   );

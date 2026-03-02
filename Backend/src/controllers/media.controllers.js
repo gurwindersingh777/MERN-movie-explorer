@@ -206,18 +206,19 @@ async function getMediaDiscover(req, res) {
 
 async function getMediaTrending(req, res) {
   try {
+    const media_type = req.params.media_type
     const time_window = req.params.time_window
 
-    const result = await getTrending(time_window);
+    const result = await getTrending(media_type, time_window);
 
     if (!result) {
-      throw new ApiError(400, `Failed to get trending all for time window ${time_window}`)
+      throw new ApiError(400, `Failed to get trending ${media_type} for time window ${time_window}`)
     }
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, result, `Trending all fetched successfully for time window ${time_window}`)
+        new ApiResponse(200, result, `Trending ${media_type} fetched successfully for time window ${time_window}`)
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })

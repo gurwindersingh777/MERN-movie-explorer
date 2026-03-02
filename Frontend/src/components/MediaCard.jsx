@@ -1,24 +1,42 @@
+import { Image } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function MediaCard({ data }) {
   const navigate = useNavigate();
 
-  function onPosterClick() {
-    const type = data.first_air_date ? "tv" : "movie";
-    navigate(`/media-details/${data?.media_type || type}/${data?.id}`);
-  }
+  const type = data?.first_air_date ? "tv" : "movie";
+
   return (
-    <>
-      {data && (
+    <div className="w-48 shrink-0 ">
+      {data?.poster_path ? (
         <img
-          className="w-47 border rounded-md border-neutral-800 cursor-pointer 
-                     transition-transform duration-200 ease-in-out 
-                     hover:scale-110"
-          src={`https://image.tmdb.org/t/p/w200${data?.poster_path}`}
-          alt={data?.title}
-          onClick={onPosterClick}
+          className="w-full h-auto border rounded-md border-neutral-800 cursor-pointer 
+        transition-transform duration-200 ease-in-out hover:scale-105"
+          src={
+            data?.poster_path
+              ? `https://image.tmdb.org/t/p/w300${data.poster_path}`
+              : "/placeholder.png"
+          }
+          alt={data?.title || data?.name}
+          onClick={() =>
+            navigate(`/media-details/${data?.media_type || type}/${data?.id}`)
+          }
         />
+      ) : (
+        <div
+          onClick={() =>
+            navigate(`/media-details/${data?.media_type || type}/${data?.id}`)
+          }
+          className="w-full h-11/12 border  border-neutral-800 cursor-pointer 
+        transition-transform duration-200 ease-in-out hover:scale-105 flex items-center justify-center rounded-md "
+        >
+          <Image className=" opacity-55" size={70} />
+        </div>
       )}
-    </>
+
+      <p className="text-xs text-center mt-2 line-clamp-1 text-neutral-400 font-mono">
+        {data?.name || data?.title}
+      </p>
+    </div>
   );
 }

@@ -35,7 +35,7 @@ export default function Hero({ query }) {
           className="relative rounded-4xl  h-screen w-full bg-cover bg-center flex items-end"
           style={{ backgroundImage: `url(${background})` }}
         >
-          <div className="absolute inset-0 bg-linear-to-t from-[#111111] bg-neutral-900/50 " />
+          <div className="absolute inset-0 bg-linear-to-t from-[#111111]  " />
 
           <div className=" z-10 p-15 w-2xl">
             <h1 className="r text-4xl font-bold tracking-tight text-balance mb-4">

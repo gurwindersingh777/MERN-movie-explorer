@@ -1,8 +1,6 @@
-
 import { addReview, deleteReview, getMediaReview, updateReview } from "@/services/reviewService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
 
 export function useAddReview() {
   const queryClient = useQueryClient()
@@ -56,7 +54,6 @@ export function useMediaReview(media_type, tmdbID) {
   return useQuery({
     queryFn: () => getMediaReview(media_type, tmdbID),
     queryKey: ["review", media_type, tmdbID],
-    retry: false
   })
 }
 

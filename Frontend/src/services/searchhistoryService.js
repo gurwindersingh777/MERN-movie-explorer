@@ -1,6 +1,6 @@
 import api from "../api/axios";
 
-export async function addToSearchHistory(data) {
+export async function addToSearchHistory(data) {  
   const res = await api.post("/searchhistory", data);
   return res.data.data;
 }

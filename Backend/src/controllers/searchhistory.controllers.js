@@ -11,19 +11,19 @@ async function addToSearchhistory(req, res) {
       throw new ApiError(400, "query is required")
     }
 
-    const alreadyExists = await SearchhistoryModel.findOne({ userID: req.user._id, query: query })
+    const alreadyExists = await SearchhistoryModel.findOne({ user: req.user._id, query: query })
 
     let search;
 
     if (alreadyExists) {
       search = await SearchhistoryModel.findOneAndUpdate(
-        { userID: req.user._id, query },
+        { user: req.user._id, query },
         { $set: { query: query } },
         { new: true, upsert: true }
       )
     } else {
       search = await SearchhistoryModel.create({
-        userID: req.user._id,
+        user: req.user._id,
         query: query
       })
     }
@@ -31,7 +31,7 @@ async function addToSearchhistory(req, res) {
     return res
       .status(201)
       .json(
-        new ApiResponse(201, search, "new seacrh add successfully")
+        new ApiResponse(201, search, "new search add successfully")
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message });
@@ -60,9 +60,8 @@ async function removeFromSearchhistory(req, res) {
 
 async function getSearchhistory(req, res) {
   try {
-
     const searchhistory = await SearchhistoryModel
-      .find({ userID: req.user._id })
+      .find({ user: req.user._id })
       .limit(10)
       .sort({ updatedAt: -1 });
 
