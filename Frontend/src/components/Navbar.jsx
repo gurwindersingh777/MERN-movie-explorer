@@ -40,8 +40,8 @@ export default function Navbar() {
           <Link to="/tv" className="hover:text-white">
             TV Shows
           </Link>
-          <Link to="/category" className="hover:text-white ">
-            Category
+          <Link to="/genre" className="hover:text-white ">
+            Genre
           </Link>
           <Link to="/watchlater" className="hover:text-white ">
             Watchlater

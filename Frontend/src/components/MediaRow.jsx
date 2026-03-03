@@ -8,11 +8,11 @@ export default function MediaRow({ data, title, more = true, wrap = false }) {
     <div>
       {data && (
         <>
-          <h2 className="scroll-m-20 border-b pb-2 mb-5 text-2xl font-semibold tracking-tight first:mt-0">
+          <h2 className=" border-b pb-2 mb-5 text-2xl font-semibold ">
             {title}
           </h2>
           <div
-            className={`flex gap-6 py-5 px-4 ${wrap ? "flex-wrap justify-center" : "overflow-x-auto"} `}
+            className={`flex gap-7 items-center py-5 px-4 ${wrap ? "flex-wrap justify-center" : "overflow-x-auto"} `}
           >
             {data?.map((element) => (
               <MediaCard data={element} key={element.id} />

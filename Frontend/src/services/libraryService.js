@@ -17,6 +17,11 @@ export async function removeFromWatchlater(id) {
   return res.data.data;
 }
 
+export async function getAllWatchlater() {
+  const res = await api.get(`/watchlater`);
+  return res.data.data;
+}
+
 // FAVORITE
 
 export async function addToFavorite(data) {

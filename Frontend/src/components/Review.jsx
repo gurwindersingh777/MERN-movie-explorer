@@ -22,8 +22,6 @@ export default function Review({ reviews, media_type, tmdbID }) {
   const { mutate: deleteReview, isPending: deletePending } = useDeleteReview();
   const { mutate: updateReview, isPending: updatePending } = useUpdateReview();
 
-  console.log(allReview);
-
   const [editPanel, setEditPanel] = useState(false);
 
   const [review, setReview] = useState("");

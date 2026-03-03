@@ -1,6 +1,6 @@
 import {
   getCategory,
-  getDetails,
+  getFullDetails,
   getSearch,
   getCredits,
   getVideos,
@@ -43,7 +43,7 @@ async function getMediaDetails(req, res) {
   try {
     const id = req.params?.id
     const media_type = req.params.type
-    const movieDetails = await getDetails(media_type, id);
+    const movieDetails = await getFullDetails(media_type, id);
 
     if (!movieDetails) {
       throw new ApiError(400, `Failed to get details of ${media_type} with id ${id}`)

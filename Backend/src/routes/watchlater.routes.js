@@ -6,8 +6,9 @@ const router = Router();
 
 router.use(verifyJWT)
 router.route("/").post(addToWatchlater);
+router.route("/").get(getAllWatchlater);
+
 router.route("/:id").get(getWatchlater);
-router.route("/all").get(getAllWatchlater);
 router.route("/:id").delete(removeFromWatchlater)
 
 export default router;

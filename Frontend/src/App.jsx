@@ -11,6 +11,9 @@ import MediaDetails from "./pages/MediaDetails";
 import Search from "./pages/Search";
 import Movies from "./pages/Movies";
 import TvShows from "./pages/TvShows";
+import WatchLater from "./pages/WatchLater";
+import Genre from "./pages/Genre";
+import GenreDetails from "./pages/GenreDetails";
 
 function App() {
 
@@ -24,6 +27,9 @@ function App() {
               <Route path="/" element={<Home />} />   
               <Route path="/movies" element={<Movies />} />   
               <Route path="/tv" element={<TvShows />} />   
+              <Route path="/genre" element={<Genre />} />   
+              <Route path="/genre/:media_type/:genre_name/:genre_id" element={<GenreDetails />} />   
+              <Route path="/watchlater" element={<WatchLater/>} />   
               <Route path="/media-details/:media_type/:id" element={<MediaDetails/>} /> 
               <Route path="/search/:q" element={<Search/>} /> 
             </Route>

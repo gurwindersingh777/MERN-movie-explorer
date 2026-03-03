@@ -14,23 +14,26 @@ import { Link, useParams } from "react-router-dom";
 import { Spinner } from "@/components/ui/spinner";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import MediaRow from "@/components/MediaRow";
-import { useAddToWatchlater, useMediaWatchlater } from "@/hooks/useLibrary";
+import {
+  useAddToWatchlater,
+  useMediaWatchlater,
+  useRemoveFromWatchlater,
+} from "@/hooks/useLibrary";
 import Review from "@/components/Review";
 
 export default function MediaDetails() {
   const { media_type, id: tmdbID } = useParams();
   const { data, isLoading } = useDetails(media_type, tmdbID);
-  const { data: watchlaterExists, isFetching } = useMediaWatchlater(tmdbID);
+  const { data: watchlater, isFetching } = useMediaWatchlater(tmdbID);
 
   const video = data?.videos.results.find((video) =>
     video.type === "Trailer" || video.type === "Teaser" ? video.key : null,
   );
 
-  const { isPending, mutate } = useAddToWatchlater();
-
-  function addToWatchlater() {
-    mutate({ media_type, tmdbID });
-  }
+  const { mutate: addToWatchlater, isPending: addWLPending } =
+    useAddToWatchlater();
+  const { mutate: removeFromWatchlater, isPending: removeWLPending } =
+    useRemoveFromWatchlater();
 
   if (isLoading) {
     return (
@@ -63,7 +66,7 @@ export default function MediaDetails() {
                   {data?.genres.map((genre) => (
                     <Badge key={genre.id} asChild variant="outline">
                       <Link
-                        to={`/category/${media_type}/${genre.name}/${genre.id}`}
+                        to={`/genre/${media_type}/${genre.name}/${genre.id}`}
                       >
                         {genre.name}
                       </Link>
@@ -104,15 +107,20 @@ export default function MediaDetails() {
 
                 <div className="flex gap-3">
                   <Button
-                    disabled={isPending || watchlaterExists || isFetching}
-                    onClick={addToWatchlater}
+                    disabled={addWLPending || isFetching || removeWLPending}
+                    onClick={
+                      watchlater
+                        ? () =>
+                            removeFromWatchlater({ id: watchlater._id, tmdbID })
+                        : () => addToWatchlater({ media_type, tmdbID })
+                    }
                     size="lg"
                     variant="outline"
                   >
-                    {isPending || isFetching ? (
+                    {addWLPending || removeWLPending || isFetching ? (
                       <Spinner />
-                    ) : watchlaterExists ? (
-                      "Added is Watchlater"
+                    ) : watchlater ? (
+                      "Remove from Watchlater"
                     ) : (
                       "Add to Watchlater"
                     )}

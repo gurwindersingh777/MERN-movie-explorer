@@ -1,10 +1,12 @@
 import { WatchlaterModel } from "../models/watchlater.models.js"
+import { getDetails } from "../services/tmdb.services.js"
 import ApiError from "../utils/ApiError.js"
 import ApiResponse from "../utils/ApiResponse.js"
 
 
 async function addToWatchlater(req, res) {
   try {
+
     const { media_type, tmdbID } = req.body
 
     if (!media_type || !tmdbID) {
@@ -12,8 +14,8 @@ async function addToWatchlater(req, res) {
     }
 
     const alreadyExists = await WatchlaterModel.findOne({
-      userID: req.user._id,
-      tmdbID,
+      user: req.user._id,
+      tmdbID: Number(tmdbID),
       media_type
     });
 
@@ -22,9 +24,9 @@ async function addToWatchlater(req, res) {
     }
 
     const watchlater = await WatchlaterModel.create({
-      tmdbID: tmdbID,
+      tmdbID: Number(tmdbID),
       media_type: media_type,
-      userID: req.user._id
+      user: req.user._id
     })
 
     if (!watchlater) {
@@ -44,8 +46,8 @@ async function addToWatchlater(req, res) {
 async function getWatchlater(req, res) {
   try {
     const tmdbID = req.params.id
-    
-    const watchlaterExists = await WatchlaterModel.findOne({  tmdbID: tmdbID, userID: req.user._id })
+
+    const watchlaterExists = await WatchlaterModel.findOne({ tmdbID: tmdbID, user: req.user._id })
 
     if (!watchlaterExists) {
       throw new ApiError(400, "Failed to get watchalater")
@@ -63,16 +65,28 @@ async function getWatchlater(req, res) {
 
 async function getAllWatchlater(req, res) {
   try {
-    const watchlaterList = await WatchlaterModel.find({ userID: req.user._id })
+    
+    const watchlaterList = await WatchlaterModel.find({ user: req.user._id })
 
-    if (!watchlaterList) {
-      throw new ApiError(400, "Failed to get watchalater")
+    if (!watchlaterList.length) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, [], "No watchlater items")
+        );
     }
+
+    const detailedList = await Promise.all(
+      watchlaterList.map(async (item) => {
+        const details = await getDetails(item.media_type, item.tmdbID)
+        return { ...details }
+      })
+    )
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, watchlaterList, "Watchlater fetched successfully")
+        new ApiResponse(200, detailedList, "Watchlater fetched successfully")
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })
@@ -87,7 +101,7 @@ async function removeFromWatchlater(req, res) {
       throw new ApiError(400, "Id is required")
     }
 
-    await WatchlaterModel.findOneAndDelete({ _id: id, userID: req.user._id });
+    await WatchlaterModel.findOneAndDelete({ _id: id, user: req.user._id });
 
     return res
       .status(200)

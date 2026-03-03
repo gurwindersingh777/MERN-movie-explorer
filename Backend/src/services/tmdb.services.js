@@ -22,7 +22,7 @@ async function getCategory(media_type, category, page) {
   }
 }
 
-async function getDetails(media_type, id) {
+async function getFullDetails(media_type, id) {
   try {
     const response = await tmdb.get(`/${media_type}/${id}`, {
       params: {
@@ -30,6 +30,15 @@ async function getDetails(media_type, id) {
           "videos,credits,similar,recommendations,reviews,watch/providers"
       }
     });
+    return response.data
+  } catch (error) {
+    throw new ApiError(400, "Failed to get details from tmdb")
+  }
+}
+
+async function getDetails(media_type, id) {
+  try {
+    const response = await tmdb.get(`/${media_type}/${id}`);
     return response.data
   } catch (error) {
     throw new ApiError(400, "Failed to get details from tmdb")
@@ -149,6 +158,7 @@ async function getReviews(media_type, id) {
 export {
   getCategory,
   getDetails,
+  getFullDetails,
   getSearch,
   getCredits,
   getVideos,

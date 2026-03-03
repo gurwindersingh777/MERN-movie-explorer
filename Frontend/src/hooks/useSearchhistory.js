@@ -1,6 +1,5 @@
-import { addToSearchHistory, getSearchHistory } from "@/services/searchhistoryService";
+import { addToSearchHistory, getSearchHistory, removeFromSearchHistory } from "@/services/searchhistoryService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 export function useAddSearchhistory() {
   const queryClient = useQueryClient()
@@ -18,5 +17,17 @@ export function useSearchhistory() {
   return useQuery({
     queryFn: () => getSearchHistory(),
     queryKey: ["searchhistory"]
+  })
+}
+
+export function useRemoveSearchhistory() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id) => removeFromSearchHistory(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["searchhistory"]
+      })
+    },
   })
 }

@@ -10,13 +10,13 @@ const watchlaterSchema = new mongoose.Schema({
     enum: ["movie", "tv"],
     required: true
   },
-  userID: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   }
 }, { timestamps: true });
 
-watchlaterSchema.index({ userID: 1, tmdbID: 1 }, { unique: true })
+watchlaterSchema.index({ user: 1, tmdbID: 1 }, { unique: true })
 
 export const WatchlaterModel = mongoose.model("Watchlater", watchlaterSchema);
