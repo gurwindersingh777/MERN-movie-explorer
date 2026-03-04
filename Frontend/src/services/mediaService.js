@@ -1,7 +1,7 @@
 import api from "../api/axios";
 
-export async function getMediaCategory(media_type, category) {
-  const res = await api.get(`/media/${media_type}/category/${category}`);
+export async function getMediaCategory(media_type, category, filters = {}) {
+  const res = await api.get(`/media/${media_type}/category/${category}`, { params: filters });
   return res.data.data;
 }
 
@@ -10,14 +10,14 @@ export async function getMediaDiscover(media_type, filters = {}) {
   return res.data.data;
 }
 
-export async function getMediaTrending(media_type, time_window) {
-  const res = await api.get(`/media/trending/${media_type}/${time_window}`);
+export async function getMediaTrending(media_type, time_window, filters = {}) {
+  const res = await api.get(`/media/trending/${media_type}/${time_window}`, { params: filters });
   return res.data.data;
 }
 
-export async function getMediaSearch(query) {
+export async function getMediaSearch(query, page = 1) {
   if (!query) return null;
-  const res = await api.get(`/media/multi/search`, { params: { q: query } });
+  const res = await api.get(`/media/multi/search`, { params: { q: query, page } });
   return res.data.data;
 }
 

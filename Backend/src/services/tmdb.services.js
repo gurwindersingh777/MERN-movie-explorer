@@ -9,10 +9,10 @@ const tmdb = axios.create({
   }
 })
 
-async function getCategory(media_type, category, page) {
+async function getCategory(media_type, category, filters) {
 
   try {
-    const response = await tmdb.get(`/${media_type}/${category}`, { params: { page } });
+    const response = await tmdb.get(`/${media_type}/${category}`, { params: filters });
     const data = response.data;
     return {
       ...data, results: data.results.map(item => ({ ...item, media_type }))
@@ -45,10 +45,10 @@ async function getDetails(media_type, id) {
   }
 }
 
-async function getSearch(query) {
+async function getSearch(query , page) {
 
   try {
-    const response = await tmdb.get(`/search/multi`, { params: { query } });
+    const response = await tmdb.get(`/search/multi`, { params: { query , page } });
     return response?.data
   } catch (error) {
     throw new ApiError(400, "Failed to get Search from tmdb")
@@ -98,10 +98,10 @@ async function getRecommendations(media_type, id) {
   }
 }
 
-async function getDiscover(media_type, filter) {
+async function getDiscover(media_type, filters) {
 
   try {
-    const response = await tmdb.get(`/discover/${media_type}`, { params: filter });
+    const response = await tmdb.get(`/discover/${media_type}`, { params: filters });
     const data = response.data;
     return {
       ...data, results: data.results.map(item => ({ ...item, media_type }))
@@ -111,10 +111,10 @@ async function getDiscover(media_type, filter) {
   }
 }
 
-async function getTrending(media_type, time_window) {
+async function getTrending(media_type, time_window, filters) {
 
   try {
-    const response = await tmdb.get(`/trending/${media_type}/${time_window}`);
+    const response = await tmdb.get(`/trending/${media_type}/${time_window}`, { params: filters });
     if (media_type !== "all") {
       const data = response.data;
       return {

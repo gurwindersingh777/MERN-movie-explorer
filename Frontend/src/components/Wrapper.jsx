@@ -1,14 +1,13 @@
-
 import MediaRow from "./MediaRow";
 import { Spinner } from "./ui/spinner";
 
-export default function Wrapper({ title, query }) {
-  const { data, isPending, isError, refetch } = query;
+export default function Wrapper({ title, query, pageContext }) {
+  const { data, isPending, isError } = query;
 
   if (isPending)
     return (
       <div className="w-full h-50  flex justify-center items-center text-xs">
-        <Spinner/>
+        <Spinner />
       </div>
     );
   if (isError) {
@@ -19,5 +18,7 @@ export default function Wrapper({ title, query }) {
     );
   }
 
-  return <MediaRow title={title} data={data?.results} />;
+  return (
+    <MediaRow title={title} data={data?.results} pageContext={pageContext} />
+  );
 }

@@ -1,10 +1,8 @@
 import MediaRow from "@/components/MediaRow";
-import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useSearch } from "@/hooks/useMedia";
-import { ArrowLeft, OctagonX } from "lucide-react";
-import React from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { useCategory, useTrending } from "@/hooks/useMedia";
+import React, { useEffect } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import {
   Pagination,
   PaginationContent,
@@ -15,11 +13,27 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-export default function Search() {
-  const { q } = useParams();
+export default function MediaPage() {
+  const { category, media_type, time_window } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const page = Number(searchParams.get("page")) || 1;
-  const { data, isPending, isError } = useSearch(q, page);
+
+  const query =
+    category === "trending"
+      ? useTrending(media_type, time_window, { page })
+      : useCategory(media_type, category, { page });
+
+  const { data, isPending, isError } = query;
+
+  const totalPages = Math.min(data?.total_pages || 1, 500);
+
+  const title =
+    category === "trending" ? `Trending by ${time_window}` : `${category}`;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
 
   if (isPending) {
     return (
@@ -38,22 +52,9 @@ export default function Search() {
   }
 
   return (
-    <div className="p-15 px-25 flex justify-center w-full h-full gap-10 flex-col">
-      {data?.results.length > 0 ? (
-        <MediaRow data={data?.results} title={q} more={false} wrap={true} />
-      ) : (
-        <div className="flex flex-col gap-5">
-          <span className="flex items-center justify-center gap-2">
-            <OctagonX />
-            No result Found : {q}
-          </span>
-          <Link to="/">
-            <Button>
-              <ArrowLeft />
-              Back to home
-            </Button>
-          </Link>
-        </div>
+    <div className="p-15 px-25 flex flex-col gap-5 w-full min-h-screen ">
+      {data?.results?.length > 0 && (
+        <MediaRow data={data?.results} title={title} more={false} wrap={true} />
       )}
 
       <Pagination>
@@ -94,7 +95,7 @@ export default function Search() {
             <PaginationLink isActive> {page} </PaginationLink>
           </PaginationItem>
 
-          {page + 1 < data?.total_pages && (
+          {page + 1 < totalPages && (
             <PaginationItem>
               <PaginationLink
                 onClick={() => setSearchParams({ page: page + 1 })}
@@ -104,23 +105,23 @@ export default function Search() {
             </PaginationItem>
           )}
 
-          {page + 2 < data?.total_pages && (
+          {page + 2 < totalPages && (
             <PaginationItem>
               <PaginationEllipsis />
             </PaginationItem>
           )}
 
-          {page < data?.total_pages && (
+          {page < totalPages && (
             <PaginationItem>
               <PaginationLink
-                onClick={() => setSearchParams({ page: data?.total_pages })}
+                onClick={() => setSearchParams({ page: totalPages })}
               >
-                {data?.total_pages}
+                {totalPages}
               </PaginationLink>
             </PaginationItem>
           )}
 
-          {page < data?.total_pages && (
+          {page < totalPages && (
             <PaginationItem>
               <PaginationNext
                 onClick={() => setSearchParams({ page: page + 1 })}

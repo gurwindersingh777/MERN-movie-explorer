@@ -3,7 +3,13 @@ import MediaCard from "./MediaCard";
 import { Badge } from "./ui/badge";
 import { Link } from "react-router-dom";
 
-export default function MediaRow({ data, title, more = true, wrap = false }) {
+export default function MediaRow({
+  data,
+  title,
+  more = true,
+  wrap = false,
+  pageContext,
+}) {
   return (
     <div>
       {data && (
@@ -19,7 +25,9 @@ export default function MediaRow({ data, title, more = true, wrap = false }) {
             ))}
             {more && (
               <Badge asChild>
-                <Link>
+                <Link
+                  to={`media/${pageContext?.category}/${pageContext?.media_type}/${pageContext?.time_window || ""}`}
+                >
                   More <ArrowUpRightIcon data-icon="inline-end" />
                 </Link>
               </Badge>

@@ -18,11 +18,11 @@ import ApiResponse from "../utils/ApiResponse.js";
 
 async function getMediaCategory(req, res) {
   try {
-    const page = req.query.page || 1;
+    const filters = req.query;
     const media_type = req.params.type
     const category = req.params.category
 
-    const result = await getCategory(media_type, category, page);
+    const result = await getCategory(media_type, category, filters);
 
     if (!result) {
       throw new ApiError(400, `Failed to get ${category} result from tmdb`)
@@ -62,13 +62,15 @@ async function getMediaDetails(req, res) {
 async function getMediaSearch(req, res) {
 
   try {
+
     const searchMovie = req.query.q
+    const page = req.query.page || 1;
 
     if (!searchMovie) {
       throw new ApiError(400, "Search query is required")
     }
 
-    const movie = await getSearch(searchMovie);
+    const movie = await getSearch(searchMovie, page);
 
     if (!movie) {
       throw new ApiError(400, `Failed to search query : ${searchMovie}`)
@@ -186,18 +188,18 @@ async function getMediaRecommendations(req, res) {
 
 async function getMediaDiscover(req, res) {
   try {
-    const filter = req.query;
+    const filters = req.query;
     const media_type = req.params.type
-    const result = await getDiscover(media_type, filter);
+    const result = await getDiscover(media_type, filters);
 
     if (!result) {
-      throw new ApiError(400, `Failed to discover ${media_type} with filter ${JSON.stringify(filter)}`)
+      throw new ApiError(400, `Failed to discover ${media_type} `)
     }
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, result, `${media_type} discovered successfully with filter ${JSON.stringify(filter)}`)
+        new ApiResponse(200, result, `${media_type} discovered successfully `)
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })
@@ -206,10 +208,11 @@ async function getMediaDiscover(req, res) {
 
 async function getMediaTrending(req, res) {
   try {
+    const filters = req.query;
     const media_type = req.params.media_type
     const time_window = req.params.time_window
 
-    const result = await getTrending(media_type, time_window);
+    const result = await getTrending(media_type, time_window, filters);
 
     if (!result) {
       throw new ApiError(400, `Failed to get trending ${media_type} for time window ${time_window}`)

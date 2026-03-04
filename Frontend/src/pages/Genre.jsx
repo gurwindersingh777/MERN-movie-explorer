@@ -5,13 +5,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Genre() {
-  const { data: movieGenres, isPending } = useGenre("movie");
-  const { data: tvGenres } = useGenre("tv");
+  const { data: movieGenres, isPending : moviePending , isError : movieError } = useGenre("movie");
+  const { data: tvGenres , isPending : tvPending , isError: tvError } = useGenre("tv");
 
-  if (isPending) {
+  if (moviePending || tvPending) {
     return (
-      <div className="w-full h-full flex justify-center items-center pb-25">
+      <div className="w-full min-h-screen flex justify-center items-center pb-25">
         <Spinner />
+      </div>
+    );
+  }
+
+  if (movieError || tvError) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center pb-25 text-sm text-neutral-300">
+        Something went wrong
       </div>
     );
   }
@@ -50,10 +58,7 @@ export default function Genre() {
           </h1>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
             {tvGenres?.genres.map((genre) => (
-              <Link
-                key={genre.id}
-                to={`/genre/tv/${genre.name}/${genre.id}`}
-              >
+              <Link key={genre.id} to={`/genre/tv/${genre.name}/${genre.id}`}>
                 <div
                   className="h-28 rounded-xl flex items-center justify-center
                 bg-linear-to-br from-neutral-800 to-neutral-900

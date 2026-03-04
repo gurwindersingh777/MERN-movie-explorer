@@ -7,7 +7,7 @@ export default function MediaCard({ data }) {
   const type = data?.first_air_date ? "tv" : "movie";
 
   return (
-    <div className="w-48 shrink-0 ">
+    <div className="w-48  shrink-0 ">
       {data?.poster_path ? (
         <img
           className="w-full h-auto border rounded-md border-neutral-800 cursor-pointer 
@@ -27,7 +27,7 @@ export default function MediaCard({ data }) {
           onClick={() =>
             navigate(`/media-details/${data?.media_type || type}/${data?.id}`)
           }
-          className="w-full h-11/12 border  border-neutral-800 cursor-pointer 
+          className="w-full h-72 border  border-neutral-800 cursor-pointer 
         transition-transform duration-200 ease-in-out hover:scale-105 flex items-center justify-center rounded-md "
         >
           <Image className=" opacity-55" size={70} />
