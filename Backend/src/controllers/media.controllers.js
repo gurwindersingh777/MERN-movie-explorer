@@ -275,6 +275,8 @@ async function getMediaWatchProvider(req, res) {
 
 async function getMediaReviews(req, res) {
   try {
+    
+    const filters = req.query
     const id = req.params?.id
     const media_type = req.params.type
 
@@ -282,7 +284,7 @@ async function getMediaReviews(req, res) {
       throw new ApiError(400, "Media id is required")
     }
 
-    const result = await getReviews(media_type, id);
+    const result = await getReviews(media_type, id ,filters);
 
     if (!result) {
       throw new ApiError(400, `Failed to get reviews for ${media_type} with id ${id}`)

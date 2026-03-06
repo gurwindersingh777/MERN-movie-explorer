@@ -95,12 +95,15 @@ export default function MediaDetails() {
                 </div>
 
                 <Link
+                  onClick={(e) => {
+                    !data?.homepage ? e.preventDefault() : null;
+                  }}
                   className="pt-4"
-                  to={data.homepage}
+                  to={data?.homepage}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button size="lg">
+                  <Button disabled={!data?.homepage} size="lg">
                     Watch now <Play />
                   </Button>
                 </Link>
@@ -112,7 +115,13 @@ export default function MediaDetails() {
                       watchlater
                         ? () =>
                             removeFromWatchlater({ id: watchlater._id, tmdbID })
-                        : () => addToWatchlater({ media_type, tmdbID })
+                        : () =>
+                            addToWatchlater({
+                              media_type,
+                              tmdbID,
+                              title: data?.title || data?.name,
+                              poster_path: data?.poster_path,
+                            })
                     }
                     size="lg"
                     variant="outline"
@@ -214,11 +223,7 @@ export default function MediaDetails() {
             )}
 
             {/* Reviews */}
-            <Review
-              reviews={data?.reviews}
-              media_type={media_type}
-              tmdbID={tmdbID}
-            />
+            <Review media_type={media_type} tmdbID={tmdbID} />
             {/* Similer */}
             {data?.similar.results.length !== 0 && (
               <div className="mt-25">

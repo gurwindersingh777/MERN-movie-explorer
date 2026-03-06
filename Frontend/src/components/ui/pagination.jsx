@@ -14,7 +14,7 @@ function Pagination({ className, ...props }) {
       role="navigation"
       aria-label="pagination"
       data-slot="pagination"
-      className={cn("mx-auto flex w-full justify-center border rounded-md p-2", className)}
+      className={cn("mx-auto flex w-full justify-center  p-3", className)}
       {...props}
     />
   );
@@ -32,7 +32,7 @@ function PaginationContent({ className, ...props }) {
 
 function PaginationItem({ ...props }) {
   return (
-    <li data-slot="pagination-item" className=" cursor-pointer" {...props} />
+    <li data-slot="pagination-item" className="cursor-pointer" {...props} />
   );
 }
 

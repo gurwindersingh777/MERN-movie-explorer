@@ -56,7 +56,7 @@ export async function getMediaWatchProvider(media_type, tmdbID) {
   return res.data.data;
 }
 
-export async function getMediaReviews(media_type, tmdbID, page = 1, limit = 10) {
-  const res = await api.get(`/media/${media_type}/${tmdbID}/reviews`, { params: { page, limit } });
+export async function getMediaReviews(media_type, tmdbID, filters) {
+  const res = await api.get(`/media/${media_type}/${tmdbID}/reviews`, { params: filters });
   return res.data.data;
 }

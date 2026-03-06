@@ -7,9 +7,9 @@ import ApiResponse from "../utils/ApiResponse.js"
 async function addToWatchlater(req, res) {
   try {
 
-    const { media_type, tmdbID } = req.body
+    const { media_type, tmdbID, title, poster_path } = req.body
 
-    if (!media_type || !tmdbID) {
+    if (!media_type || !tmdbID || !title || !poster_path) {
       throw new ApiError(400, "All fields are required")
     }
 
@@ -26,6 +26,8 @@ async function addToWatchlater(req, res) {
     const watchlater = await WatchlaterModel.create({
       tmdbID: Number(tmdbID),
       media_type: media_type,
+      title,
+      poster_path,
       user: req.user._id
     })
 
@@ -66,7 +68,17 @@ async function getWatchlater(req, res) {
 async function getAllWatchlater(req, res) {
   try {
     
-    const watchlaterList = await WatchlaterModel.find({ user: req.user._id })
+    const page = req.query.page || 1
+    const limit = 10
+    const skip = (page - 1) * limit;
+
+    const total = await WatchlaterModel.countDocuments({ user: req.user._id })
+    const totalPages = Math.ceil(total / limit)
+
+    const watchlaterList = await WatchlaterModel
+      .find({ user: req.user._id })
+      .skip(skip)
+      .limit(limit)
 
     if (!watchlaterList.length) {
       return res
@@ -76,17 +88,10 @@ async function getAllWatchlater(req, res) {
         );
     }
 
-    const detailedList = await Promise.all(
-      watchlaterList.map(async (item) => {
-        const details = await getDetails(item.media_type, item.tmdbID)
-        return { ...details }
-      })
-    )
-
     return res
       .status(200)
       .json(
-        new ApiResponse(200, detailedList, "Watchlater fetched successfully")
+        new ApiResponse(200, { results: watchlaterList, page, totalPages }, "Watchlater fetched successfully")
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })

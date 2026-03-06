@@ -14,13 +14,18 @@ import {
 } from "@/hooks/useReview";
 import { Spinner } from "./ui/spinner";
 import { PencilIcon, TrashIcon } from "lucide-react";
+import { useReviews } from "@/hooks/useMedia";
+import MediaPagination from "./MediaPagination";
 
-export default function Review({ reviews, media_type, tmdbID }) {
-  const { data: allReview, isFetching } = useMediaReview(media_type, tmdbID);
-  const { myReview, otherReviews } = allReview || {};
+export default function Review({ media_type, tmdbID }) {
+  const [page, setPage] = useState(1);
+  const { data: tmdbReviews } = useReviews(media_type, tmdbID, { page });
+  const { data: allReviews, isFetching } = useMediaReview(media_type, tmdbID);
+  const { myReview, otherReviews } = allReviews || {};
   const { mutate: addReview, isPending: addPending } = useAddReview();
   const { mutate: deleteReview, isPending: deletePending } = useDeleteReview();
   const { mutate: updateReview, isPending: updatePending } = useUpdateReview();
+
 
   const [editPanel, setEditPanel] = useState(false);
 
@@ -56,7 +61,7 @@ export default function Review({ reviews, media_type, tmdbID }) {
       setReview(myReview.content);
       setRating([myReview.rating]);
     }
-  }, [editPanel, allReview]);
+  }, [editPanel, allReviews]);
 
   return (
     <div className="mt-30 flex flex-col items-start border-t">
@@ -64,7 +69,8 @@ export default function Review({ reviews, media_type, tmdbID }) {
         Reviews and Ratings
       </h1>
 
-      <div className="flex flex-col gap-3 w-full ">
+      <div className="flex flex-col  gap-3 w-full ">
+        {/* Add review and show my review */}
         {myReview && !editPanel ? (
           <div className="flex flex-col gap-3 bg-neutral-700 p-5 rounded-lg">
             <div className="flex items-center justify-between border-b pb-3">
@@ -162,7 +168,7 @@ export default function Review({ reviews, media_type, tmdbID }) {
           </form>
         )}
 
-        {/* app reviews  */}
+        {/*my app reviews  */}
         {otherReviews?.map((review) => (
           <div
             key={review._id}
@@ -178,10 +184,10 @@ export default function Review({ reviews, media_type, tmdbID }) {
                   <AvatarFallback>{review.user.username}</AvatarFallback>
                 </Avatar>
               ) : (
-              <span>
-                <CircleUser />
-              </span>
-               )} 
+                <span>
+                  <CircleUser />
+                </span>
+              )}
               <span className="text-xs">{review?.user.username}</span>
             </div>
             <div className="flex w-full items-center gap-4  justify-between">
@@ -196,8 +202,9 @@ export default function Review({ reviews, media_type, tmdbID }) {
             </div>
           </div>
         ))}
+
         {/* tmdb reviews */}
-        {reviews?.results?.map((review) => (
+        {tmdbReviews?.results?.map((review) => (
           <div
             key={review.id}
             className="flex flex-col gap-4 bg-neutral-800 p-5 rounded-lg items-start"
@@ -231,6 +238,10 @@ export default function Review({ reviews, media_type, tmdbID }) {
             </div>
           </div>
         ))}
+
+        {tmdbReviews && (
+         <MediaPagination  totalPages={otherReviews?.total_pages} page={page} setPage={setPage}/>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getMediaCategory, getMediaDetails, getMediaDiscover, getMediaGenre, getMediaSearch, getMediaTrending } from "../services/mediaService"
+import { getMediaCategory, getMediaDetails, getMediaDiscover, getMediaGenre, getMediaReviews, getMediaSearch, getMediaTrending } from "../services/mediaService"
 
 export function useTrending(media_type, time_window, filters) {
   return useQuery({
@@ -40,5 +40,12 @@ export function useDiscover(media_type, filters) {
   return useQuery({
     queryFn: () => getMediaDiscover(media_type, filters),
     queryKey: ["discover", media_type, filters],
+  })
+}
+
+export function useReviews(media_type, tmdbID, filters) {
+  return useQuery({
+    queryFn: () => getMediaReviews(media_type, tmdbID, filters),
+    queryKey: ["reviews", media_type, tmdbID, filters],
   })
 }

@@ -34,7 +34,7 @@ export default function NavSearch() {
     <form onSubmit={handleSearch}>
       <ButtonGroup className=" relative">
         <Input
-          className="w-70 "
+          className="w-70 h-8 text-xs"
           placeholder="Search for any Movie and TV shows"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -68,7 +68,7 @@ export default function NavSearch() {
             </div>
           </div>
         )}
-        <Button type="submit" variant="outline" aria-label="Search">
+        <Button type="submit" size="sm" variant="outline" aria-label="Search">
           <SearchIcon />
         </Button>
       </ButtonGroup>

@@ -10,6 +10,14 @@ const watchlaterSchema = new mongoose.Schema({
     enum: ["movie", "tv"],
     required: true
   },
+  title: {
+    type: String,
+    required: true
+  },
+  poster_path: {
+    type: String,
+    required: true
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

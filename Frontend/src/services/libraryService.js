@@ -17,8 +17,8 @@ export async function removeFromWatchlater(id) {
   return res.data.data;
 }
 
-export async function getAllWatchlater() {
-  const res = await api.get(`/watchlater`);
+export async function getAllWatchlater(page) {
+  const res = await api.get(`/watchlater`,{params : {page}});
   return res.data.data;
 }
 

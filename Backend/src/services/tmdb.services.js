@@ -146,9 +146,9 @@ async function getWatchProviders(media_type, id) {
   }
 }
 
-async function getReviews(media_type, id) {
+async function getReviews(media_type, id, filters) {
   try {
-    const response = await tmdb.get(`/${media_type}/${id}/reviews`);
+    const response = await tmdb.get(`/${media_type}/${id}/reviews`,{params : filters});
     return response?.data
   } catch (error) {
     throw new ApiError(400, "Failed to get genre from tmdb")

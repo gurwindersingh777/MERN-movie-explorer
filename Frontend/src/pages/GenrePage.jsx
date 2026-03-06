@@ -1,17 +1,10 @@
 import MediaRow from "@/components/MediaRow";
+import MediaPagination from "@/components/MediaPagination";
 import { Spinner } from "@/components/ui/spinner";
 import { useDiscover } from "@/hooks/useMedia";
 import React, { useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+
 
 export default function GenrePage() {
   const { media_type, genre_name, genre_id } = useParams();
@@ -44,88 +37,22 @@ export default function GenrePage() {
   }
 
   return (
-    <div className="p-15 px-25 flex flex-col gap-5 justify-center w-full h-full">
+    <>
       {data?.results.length > 0 && (
-        <MediaRow
-          data={data?.results}
-          title={genre_name}
-          more={false}
-          wrap={true}
-        />
+        <div className="p-15 px-25 flex flex-col gap-5 justify-center w-full h-full">
+          <MediaRow
+            data={data?.results}
+            title={genre_name}
+            more={false}
+            wrap={true}
+          />
+          <MediaPagination
+            totalPages={totalPages}
+            page={page}
+            setSearchParams={setSearchParams}
+          />
+        </div>
       )}
-      <Pagination>
-        <PaginationContent>
-          {page > 1 && (
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setSearchParams({ page: page - 1 })}
-              />
-            </PaginationItem>
-          )}
-
-          {page > 2 && (
-            <PaginationItem>
-              <PaginationLink onClick={() => setSearchParams({ page: 1 })}>
-                1
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          {page > 3 && (
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-          )}
-
-          {page > 1 && (
-            <PaginationItem>
-              <PaginationLink
-                onClick={() => setSearchParams({ page: page - 1 })}
-              >
-                {page - 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          <PaginationItem>
-            <PaginationLink isActive> {page} </PaginationLink>
-          </PaginationItem>
-
-          {page + 1 < totalPages && (
-            <PaginationItem>
-              <PaginationLink
-                onClick={() => setSearchParams({ page: page + 1 })}
-              >
-                {page + 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          {page + 2 < totalPages && (
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-          )}
-
-          {page < totalPages && (
-            <PaginationItem>
-              <PaginationLink
-                onClick={() => setSearchParams({ page: totalPages })}
-              >
-                {totalPages}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          {page < totalPages && (
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setSearchParams({ page: page + 1 })}
-              />
-            </PaginationItem>
-          )}
-        </PaginationContent>
-      </Pagination>
-    </div>
+    </>
   );
 }

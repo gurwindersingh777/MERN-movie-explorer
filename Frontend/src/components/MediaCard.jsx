@@ -19,7 +19,7 @@ export default function MediaCard({ data }) {
           }
           alt={data?.title || data?.name}
           onClick={() =>
-            navigate(`/media-details/${data?.media_type || type}/${data?.id}`)
+            navigate(`/media-details/${data?.media_type || type}/${data?.id || data?.tmdbID}`)
           }
         />
       ) : (

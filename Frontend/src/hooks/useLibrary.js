@@ -43,10 +43,10 @@ export function useMediaWatchlater(tmdbID) {
   })
 }
 
-export function useAllWatchlater() {
+export function useAllWatchlater(page) {
   return useQuery({
-    queryFn: () => getAllWatchlater(),
-    queryKey: ["watchlater"],
+    queryFn: () => getAllWatchlater(page),
+    queryKey: ["watchlater",page],
     retry: false
   })
 }
