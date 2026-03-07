@@ -18,7 +18,7 @@ export async function removeFromWatchlater(id) {
 }
 
 export async function getAllWatchlater(page) {
-  const res = await api.get(`/watchlater`,{params : {page}});
+  const res = await api.get(`/watchlater`, { params: { page } });
   return res.data.data;
 }
 
@@ -29,12 +29,17 @@ export async function addToFavorite(data) {
   return res.data.data;
 }
 
-export async function getFavorite() {
-  const res = await api.get("/favorite");
+export async function getMediaFavorite(id) {
+  const res = await api.get(`/favorite/${id}`);
   return res.data.data;
 }
 
 export async function removeFromFavorite(id) {
   const res = await api.delete(`/favorite/${id}`);
+  return res.data.data;
+}
+
+export async function getAllFavorite(page) {
+  const res = await api.get("/favorite", { params: { page } });
   return res.data.data;
 }

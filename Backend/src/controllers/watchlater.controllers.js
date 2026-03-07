@@ -49,16 +49,16 @@ async function getWatchlater(req, res) {
   try {
     const tmdbID = req.params.id
 
-    const watchlaterExists = await WatchlaterModel.findOne({ tmdbID: tmdbID, user: req.user._id })
+    const watchlater = await WatchlaterModel.findOne({ tmdbID: tmdbID, user: req.user._id })
 
-    if (!watchlaterExists) {
+    if (!watchlater) {
       throw new ApiError(400, "Failed to get watchalater")
     }
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, watchlaterExists, "Watchlater fetched successfully")
+        new ApiResponse(200, watchlater, "Watchlater fetched successfully")
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })

@@ -1,4 +1,4 @@
-import { addToWatchlater, getAllWatchlater, getMediaWatchlater, removeFromWatchlater } from "@/services/libraryService";
+import { addToFavorite, addToWatchlater, getAllFavorite, getAllWatchlater, getMediaFavorite, getMediaWatchlater, removeFromFavorite, removeFromWatchlater } from "@/services/libraryService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -47,6 +47,58 @@ export function useAllWatchlater(page) {
   return useQuery({
     queryFn: () => getAllWatchlater(page),
     queryKey: ["watchlater",page],
+    retry: false
+  })
+}
+
+export function useAddToFavorite() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data) => addToFavorite(data),
+    onSuccess: (_, variables) => {
+      toast.success("Added To Favorites");
+      queryClient.invalidateQueries({
+        queryKey: ["favorite", variables.tmdbID]
+      })
+    },
+    onError: (error) => {
+      toast.error('Failed to Add in Favorites' || error.response?.data?.message || error.message);
+    },
+  })
+}
+
+export function useRemoveFromFavorite() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id  }) => removeFromFavorite(id),
+    onSuccess: (_, variables) => {
+      toast.success("Remove From Favorites");
+      queryClient.setQueryData(
+        ["favorite", variables.tmdbID],
+        null
+      )
+       queryClient.invalidateQueries({
+        queryKey: ["favorite"]
+      })
+    },
+    onError: (error) => {
+      toast.error('Failed to Remove From Favorites' || error.response?.data?.message || error.message);
+    },
+  })
+}
+
+export function useMediaFavorite(tmdbID) {
+  return useQuery({
+    queryFn: () => getMediaFavorite(tmdbID),
+    queryKey: ["favorite", tmdbID],
+    retry: false
+  })
+}
+
+export function useAllFavorite(page) {
+  return useQuery({
+    queryFn: () => getAllFavorite(page),
+    queryKey: ["favorite",page],
     retry: false
   })
 }

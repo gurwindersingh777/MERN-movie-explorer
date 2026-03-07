@@ -27,7 +27,7 @@ export default function MediaCard({ data }) {
           onClick={() =>
             navigate(`/media-details/${data?.media_type || type}/${data?.id}`)
           }
-          className="w-full h-72 border  border-neutral-800 cursor-pointer 
+          className="w-full h-71 border  border-neutral-800 cursor-pointer 
         transition-transform duration-200 ease-in-out hover:scale-105 flex items-center justify-center rounded-md "
         >
           <Image className=" opacity-55" size={70} />

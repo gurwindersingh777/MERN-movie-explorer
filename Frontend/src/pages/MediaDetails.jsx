@@ -5,7 +5,9 @@ import {
   Bookmark,
   Calendar,
   Clock,
+  Heart,
   HeartPlus,
+  Image,
   Languages,
   Play,
   Star,
@@ -15,8 +17,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import MediaRow from "@/components/MediaRow";
 import {
+  useAddToFavorite,
   useAddToWatchlater,
+  useMediaFavorite,
   useMediaWatchlater,
+  useRemoveFromFavorite,
   useRemoveFromWatchlater,
 } from "@/hooks/useLibrary";
 import Review from "@/components/Review";
@@ -24,7 +29,9 @@ import Review from "@/components/Review";
 export default function MediaDetails() {
   const { media_type, id: tmdbID } = useParams();
   const { data, isLoading } = useDetails(media_type, tmdbID);
-  const { data: watchlater, isFetching } = useMediaWatchlater(tmdbID);
+  const { data: watchlater, isFetching: WLfetching } =
+    useMediaWatchlater(tmdbID);
+  const { data: favorite, isFetching: Favfetching } = useMediaFavorite(tmdbID);
 
   const video = data?.videos.results.find((video) =>
     video.type === "Trailer" || video.type === "Teaser" ? video.key : null,
@@ -32,8 +39,12 @@ export default function MediaDetails() {
 
   const { mutate: addToWatchlater, isPending: addWLPending } =
     useAddToWatchlater();
+  const { mutate: addToFavorite, isPending: addFavPending } =
+    useAddToFavorite();
   const { mutate: removeFromWatchlater, isPending: removeWLPending } =
     useRemoveFromWatchlater();
+  const { mutate: removeFromFavorite, isPending: removeFavPending } =
+    useRemoveFromFavorite();
 
   if (isLoading) {
     return (
@@ -43,18 +54,19 @@ export default function MediaDetails() {
     );
   }
   return (
-    <div className="relative h-screen w-full">
+    <div className="relative h-screen w-full ">
       {data && (
         <>
           {/* backdrop  */}
           <div
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0  bg-cover bg-center"
             style={{
               backgroundImage: `url(https://image.tmdb.org/t/p/original${data?.backdrop_path})`,
             }}
           />
           <div className="absolute inset-0 bg-linear-to-t from-[#111111] to-neutral-900/50 " />
-          <div className="relative z-10 flex flex-col justify-between py-25 px-35 h-full">
+
+          <div className="relative z-10 flex flex-col gap-20  py-25 px-35 h-full">
             {/* info */}
             <div className="flex justify-between w-full">
               <div className="flex flex-col gap-5 items-start">
@@ -110,11 +122,14 @@ export default function MediaDetails() {
 
                 <div className="flex gap-3">
                   <Button
-                    disabled={addWLPending || isFetching || removeWLPending}
+                    disabled={addWLPending || WLfetching || removeWLPending}
                     onClick={
                       watchlater
                         ? () =>
-                            removeFromWatchlater({ id: watchlater._id, tmdbID })
+                            removeFromWatchlater({
+                              id: watchlater?._id,
+                              tmdbID,
+                            })
                         : () =>
                             addToWatchlater({
                               media_type,
@@ -126,33 +141,66 @@ export default function MediaDetails() {
                     size="lg"
                     variant="outline"
                   >
-                    {addWLPending || removeWLPending || isFetching ? (
+                    {addWLPending || removeWLPending || WLfetching ? (
                       <Spinner />
                     ) : watchlater ? (
-                      "Remove from Watchlater"
+                      "Remove from Watchlaters"
                     ) : (
-                      "Add to Watchlater"
+                      "Add to Watchlaters"
                     )}
                     <Bookmark />
                   </Button>
-                  <Button size="lg" variant="outline">
-                    Add to Favorite <HeartPlus />
+
+                  <Button
+                    disabled={addFavPending || Favfetching || removeFavPending}
+                    onClick={
+                      favorite
+                        ? () =>
+                            removeFromFavorite({ id: favorite?._id, tmdbID })
+                        : () =>
+                            addToFavorite({
+                              media_type,
+                              tmdbID,
+                              title: data?.title || data?.name,
+                              poster_path: data?.poster_path,
+                              overview: data?.overview,
+                            })
+                    }
+                    size="lg"
+                    variant="outline"
+                  >
+                    {addFavPending || Favfetching || removeFavPending ? (
+                      <Spinner />
+                    ) : favorite ? (
+                      "Remove from Favorites"
+                    ) : (
+                      "Add to Favorites"
+                    )}
+                    <Heart />
                   </Button>
                 </div>
               </div>
               <div className="pr-20">
-                <img
-                  className=" shadow-lg shadow-black w-65 rounded-xl border border-neutral-700"
-                  src={`https://image.tmdb.org/t/p/original/${data?.poster_path}`}
-                />
+                {data?.poster_path ? (
+                  <img
+                    className=" shadow-lg shadow-black w-65 rounded-xl border border-neutral-700"
+                    src={`https://image.tmdb.org/t/p/original/${data?.poster_path}`}
+                  />
+                ) : (
+                  <div className="w-65 h-90 border  border-neutral-800  flex items-center justify-center rounded-md ">
+                    <Image className=" opacity-55" size={50} />
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Trailer */}
-            <div className="mt-30 flex flex-col items-center border-t">
-              <h1 className=" self-start text-2xl my-10 ">Official Trailer</h1>
+            <div className=" flex flex-col items-center ">
+              <h1 className=" self-start text-2xl my-10 w-full pb-3 border-b">
+                Official Trailer
+              </h1>
               <iframe
-                className="aspect-video "
+                className="aspect-video border"
                 src={`https://www.youtube.com/embed/${video?.key}?autoplay=1&mute=1`}
                 allow="autoplay "
                 allowFullScreen
@@ -160,16 +208,16 @@ export default function MediaDetails() {
             </div>
 
             {/* Videos */}
-            {data?.videos?.results.length > 1 && (
-              <div className="mt-30 flex flex-col items-center border-t">
-                <h1 className=" self-start text-2xl my-10 font-medium">
+            {data?.videos?.results.length > 0 && (
+              <div className="flex flex-col items-center ">
+                <h1 className=" self-start text-2xl my-10 font-medium w-full pb-3 border-b">
                   Videos
                 </h1>
-                <div className="h-50 w-full flex overflow-x-scroll">
+                <div className="h-50 w-full flex overflow-x-scroll gap-2">
                   {data?.videos.results?.slice(0, 5).map((video) => (
                     <iframe
                       key={video.id}
-                      className="aspect-video "
+                      className="aspect-video border"
                       src={`https://www.youtube.com/embed/${video?.key}`}
                       allow="autoplay"
                       allowFullScreen
@@ -181,8 +229,8 @@ export default function MediaDetails() {
 
             {/* Season */}
             {data?.seasons && (
-              <div className="mt-30  border-t">
-                <h1 className=" self-start text-2xl my-10 font-medium">
+              <div>
+                <h1 className=" self-start text-2xl my-10 font-medium w-full pb-3 border-b">
                   Seasons
                 </h1>
                 <div className="text-sm flex gap-2 mb-5">
@@ -195,12 +243,19 @@ export default function MediaDetails() {
                       key={season.id}
                       className="flex gap-10 border items-center rounded-2xl p-3"
                     >
-                      <img
-                        className="w-35 border rounded-md border-neutral-800 
+                      {season?.poster_path ? (
+                        <img
+                          className="w-35 border rounded-md border-neutral-800 
                       "
-                        src={`https://image.tmdb.org/t/p/w200${season?.poster_path}`}
-                        alt={season?.title}
-                      />
+                          src={`https://image.tmdb.org/t/p/w200${season?.poster_path}`}
+                          alt={season?.title}
+                        />
+                      ) : (
+                        <div className="w-35 h-53 border  border-neutral-800  flex items-center justify-center rounded-md ">
+                          <Image className=" opacity-55" size={50} />
+                        </div>
+                      )}
+
                       <div className="flex flex-col gap-2">
                         <span className="underline text-neutral-200">
                           {season.name}
@@ -224,21 +279,18 @@ export default function MediaDetails() {
 
             {/* Reviews */}
             <Review media_type={media_type} tmdbID={tmdbID} />
+
             {/* Similer */}
-            {data?.similar.results.length !== 0 && (
-              <div className="mt-25">
-                <MediaRow title="Similar" data={data.similar.results} />
-              </div>
+            {data?.similar.results.length > 0 && (
+              <MediaRow title="Similar" data={data.similar.results} />
             )}
 
             {/* Recomendation */}
-            {data?.recommendations.results.length !== 0 && (
-              <div className="mt-25">
-                <MediaRow
-                  title="Recommendations"
-                  data={data.recommendations.results}
-                />
-              </div>
+            {data?.recommendations.results.length > 0 && (
+              <MediaRow
+                title="Recommendations"
+                data={data.recommendations.results}
+              />
             )}
           </div>
         </>

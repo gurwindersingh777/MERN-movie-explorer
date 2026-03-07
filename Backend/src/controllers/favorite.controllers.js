@@ -4,15 +4,15 @@ import ApiResponse from "../utils/ApiResponse.js"
 
 async function addToFavorite(req, res) {
   try {
-    const { media_type, tmdbID } = req.body
+    const { media_type, tmdbID, title, poster_path ,overview } = req.body
 
-    if (!media_type || !tmdbID) {
+    if (!media_type || !tmdbID || !title || !poster_path || !overview) {
       throw new ApiError(400, "All fields are required")
     }
 
     const alreadyExists = await FavoriteModel.findOne({
-      userID: req.user._id,
-      tmdbID,
+      user: req.user._id,
+      tmdbID: Number(tmdbID),
       media_type
     });
 
@@ -21,13 +21,17 @@ async function addToFavorite(req, res) {
     }
 
     const favorite = await FavoriteModel.create({
-      tmdbID: tmdbID,
+      tmdbID: Number(tmdbID),
       media_type: media_type,
-      userID: req.user._id
+      title,
+      overview,
+      poster_path,
+
+      user: req.user._id
     })
 
     if (!favorite) {
-      throw new ApiError(400, "Failed to create favorite")
+      throw new ApiError(400, "Failed to add in favorite")
     }
 
     return res
@@ -42,16 +46,51 @@ async function addToFavorite(req, res) {
 
 async function getFavorite(req, res) {
   try {
-    const favoriteList = await FavoriteModel.find({ userID: req.user._id })
+    const tmdbID = req.params.id
 
-    if (!favoriteList) {
+    const favorite = await FavoriteModel.findOne({ tmdbID: tmdbID, user: req.user._id })
+
+    if (!favorite) {
       throw new ApiError(400, "Failed to get favorites")
     }
 
     return res
       .status(200)
       .json(
-        new ApiResponse(200, favoriteList, "favorite fetched successfully")
+        new ApiResponse(200, favorite, "favorite fetched successfully")
+      )
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, error: error.message })
+  }
+}
+
+async function getAllFavorite(req, res) {
+  try {
+
+    const page = req.query.page || 1
+    const limit = 10
+    const skip = (page - 1) * limit;
+
+    const total = await FavoriteModel.countDocuments({ user: req.user._id })
+    const totalPages = Math.ceil(total / limit)
+
+    const favoriteList = await FavoriteModel
+      .find({ user: req.user._id })
+      .skip(skip)
+      .limit(limit)
+
+    if (!favoriteList.length) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, [], "No favorites items")
+        );
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, { results: favoriteList, page, totalPages }, "Favorites fetched successfully")
       )
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, error: error.message })
@@ -66,7 +105,7 @@ async function removeFromFavorite(req, res) {
       throw new ApiError(400, "Id is required")
     }
 
-    await FavoriteModel.findOneAndDelete({ _id: id, userID: req.user._id });
+    await FavoriteModel.findOneAndDelete({ _id: id, user: req.user._id });
 
     return res
       .status(200)
@@ -80,5 +119,6 @@ async function removeFromFavorite(req, res) {
 export {
   addToFavorite,
   getFavorite,
+  getAllFavorite,
   removeFromFavorite
 }

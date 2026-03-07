@@ -26,7 +26,6 @@ export default function Review({ media_type, tmdbID }) {
   const { mutate: deleteReview, isPending: deletePending } = useDeleteReview();
   const { mutate: updateReview, isPending: updatePending } = useUpdateReview();
 
-
   const [editPanel, setEditPanel] = useState(false);
 
   const [review, setReview] = useState("");
@@ -64,8 +63,8 @@ export default function Review({ media_type, tmdbID }) {
   }, [editPanel, allReviews]);
 
   return (
-    <div className="mt-30 flex flex-col items-start border-t">
-      <h1 className=" self-start text-2xl my-8 font-medium">
+    <div className="flex flex-col items-start ">
+      <h1 className=" self-start text-2xl  font-medium border-b w-full pb-2">
         Reviews and Ratings
       </h1>
 
@@ -124,7 +123,7 @@ export default function Review({ media_type, tmdbID }) {
         ) : (
           <form
             onSubmit={handleReview}
-            className="flex flex-col gap-3 p-5 m-5  border rounded-2xl w-1/2"
+            className="flex flex-col gap-3 p-5 mx-25 my-10  border bg-neutral-900 rounded-2xl "
           >
             <h5 className="text-sm ">Enter your reviews </h5>
             <Textarea
@@ -134,7 +133,7 @@ export default function Review({ media_type, tmdbID }) {
               required
             />
             <div className="flex justify-between w-full">
-              <div className=" w-1/2 ">
+              <div className=" w-1/6 ">
                 <div className="flex justify-between pb-2">
                   <Label htmlFor="rating">Rating</Label>
                   <span className="text-muted-foreground text-sm flex items-center gap-0.5">
@@ -239,8 +238,8 @@ export default function Review({ media_type, tmdbID }) {
           </div>
         ))}
 
-        {tmdbReviews && (
-         <MediaPagination  totalPages={otherReviews?.total_pages} page={page} setPage={setPage}/>
+        {tmdbReviews?.results?.length > 0 && (
+         <MediaPagination  totalPages={tmdbReviews?.total_pages} page={page} setPage={setPage}/>
         )}
       </div>
     </div>
