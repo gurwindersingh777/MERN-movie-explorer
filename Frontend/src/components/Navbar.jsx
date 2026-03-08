@@ -17,11 +17,12 @@ import {
   Heart,
 } from "lucide-react";
 import { Spinner } from "./ui/spinner.jsx";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavSearch from "./NavSearch.jsx";
 
 export default function Navbar() {
-  const { data: user } = useCurrentUser();
+  const { data } = useCurrentUser();
+  const user = data?.user
   const { mutate: logout, isPending } = useLogout();
 
   return (
@@ -87,19 +88,28 @@ export default function Navbar() {
       <div className="flex items-center gap-5">
         <NavSearch />
 
-        {user?.user ? (
+        {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="outline">
-                <CircleUser />
-                {isPending ? <Spinner /> : user?.user.username}
+                {user?.avatar ? (
+              <Avatar  className=" w-5 h-5 border border-neutral-500" >
+                <AvatarImage src={user?.avatar} />
+                <AvatarFallback>{user?.username}</AvatarFallback>
+              </Avatar>
+            ) : (
+              <CircleUser  />
+            )}
+                {isPending ? <Spinner /> : user?.username}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+              <Link to="/profile">
               <DropdownMenuItem>
                 <UserIcon />
                 Profile
               </DropdownMenuItem>
+              </Link>
               <Link to="/favorite">
                 <DropdownMenuItem>
                   <Heart />

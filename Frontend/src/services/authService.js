@@ -25,4 +25,9 @@ export async function refreshToken() {
   return res.data.data
 }
 
-
+export async function updateProfile(data) {
+  const res = await api.patch("/users/profile", data, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+  return res.data.data;
+}

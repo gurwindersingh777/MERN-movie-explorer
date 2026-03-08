@@ -16,6 +16,7 @@ import Genre from "./pages/Genre";
 import GenrePage from "./pages/GenrePage";
 import MediaPage from "./pages/MediaPage";
 import Favorites from "./pages/Favorites";
+import Profile from "./pages/Profile";
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
               <Route path="/media/:category/:media_type/:time_window?" element={<MediaPage />} />   
               <Route path="/watchlater" element={<WatchLater/>} />   
               <Route path="/favorite" element={<Favorites/>} />   
+              <Route path="/profile" element={<Profile/>} />   
               <Route path="/media-details/:media_type/:id" element={<MediaDetails/>} /> 
               <Route path="/search/:q" element={<Search/>} /> 
             </Route>

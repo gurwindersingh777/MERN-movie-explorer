@@ -1,4 +1,4 @@
-import { getCurrentUser, loginUser, logoutUser, registerUser } from "../services/authService";
+import { getCurrentUser, loginUser, logoutUser, registerUser, updateProfile } from "../services/authService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -68,6 +68,23 @@ export function useLogout() {
         error?.message ||
         "Something went wrong while logout"
       );
+    },
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateProfile,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      toast.success("Profile updated successfully");
+    },
+
+    onError: (error) => {
+      toast.error(error.response?.data?.message || error.message);
     },
   });
 }

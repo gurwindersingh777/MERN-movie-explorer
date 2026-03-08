@@ -25,7 +25,8 @@ export default function Review({ media_type, tmdbID }) {
   const { mutate: addReview, isPending: addPending } = useAddReview();
   const { mutate: deleteReview, isPending: deletePending } = useDeleteReview();
   const { mutate: updateReview, isPending: updatePending } = useUpdateReview();
-
+  console.log(myReview);
+  
   const [editPanel, setEditPanel] = useState(false);
 
   const [review, setReview] = useState("");
@@ -97,13 +98,10 @@ export default function Review({ media_type, tmdbID }) {
             </div>
             <div className="flex  gap-4  justify-between">
               <div className="flex items-center gap-4 ">
-                {myReview?.avatar ? (
+                {myReview?.user.avatar ? (
                   <Avatar>
-                    <AvatarImage
-                      src={`https://image.tmdb.org/t/p/original${review.author_details.avatar_path}`}
-                      alt="Avatar"
-                    />
-                    <AvatarFallback>{review.author}</AvatarFallback>
+                    <AvatarImage src={myReview?.user.avatar} alt="Avatar" />
+                    <AvatarFallback>{myReview.user.username}</AvatarFallback>
                   </Avatar>
                 ) : (
                   <span>
@@ -176,10 +174,7 @@ export default function Review({ media_type, tmdbID }) {
             <div className="flex  items-center  gap-2 border-b w-full pb-3">
               {review.user.avatar ? (
                 <Avatar>
-                  <AvatarImage
-                    src={`https://image.tmdb.org/t/p/original${review.user.avatar}`}
-                    alt="Avatar"
-                  />
+                  <AvatarImage src={review.user.avatar} alt="Avatar" />
                   <AvatarFallback>{review.user.username}</AvatarFallback>
                 </Avatar>
               ) : (
@@ -239,7 +234,11 @@ export default function Review({ media_type, tmdbID }) {
         ))}
 
         {tmdbReviews?.results?.length > 0 && (
-         <MediaPagination  totalPages={tmdbReviews?.total_pages} page={page} setPage={setPage}/>
+          <MediaPagination
+            totalPages={tmdbReviews?.total_pages}
+            page={page}
+            setPage={setPage}
+          />
         )}
       </div>
     </div>

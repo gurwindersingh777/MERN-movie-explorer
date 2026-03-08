@@ -172,110 +172,44 @@ async function currentUser(req, res) {
   }
 }
 
-async function changeCurrentPassword(req, res) {
-
+async function updateProfile(req, res) {
   try {
-    const { oldPassword, newPassword, confirmPassword } = req.body
-
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      throw new ApiError(400, "All field are required")
-    }
-    if (oldPassword === newPassword) {
-      throw new ApiError(400, "New password must be different")
-    }
-    if (newPassword.length < 6) {
-      throw new ApiError(400, "New password must be at least 6 characters")
-    }
-    if (newPassword !== confirmPassword) {
-      throw new ApiError(400, "Password do not match")
-    }
-
-    const user = await UserModel.findById(req.user._id);
-
-    if (!user) {
-      throw new ApiError(400, "User not found")
-    }
-
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
-
-    if (!isPasswordCorrect) {
-      throw new ApiError(400, "Wrong password");
-    }
-
-    user.password = newPassword
-    user.refreshToken = null;
-    await user.save({ validateBeforeSave: false })
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, {}, "Password changed successfully. Please login again.")
-      )
-  } catch (error) {
-    res.status(error.statusCode || 500).json({ success: false, error: error.message })
-  }
-
-}
-
-async function updateAvatar(req, res) {
-  try {
+    const { username, fullname, currPassword, newPassword } = req.body
     const avatarLocalPath = req.file?.path
 
-    if (!avatarLocalPath) {
-      throw new ApiError(400, "Avatar file is required")
-    }
-
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-
-    if (!avatar) {
-      throw new ApiError(400, "Failed to upload avatar")
-    }
-
     const user = await UserModel.findById(req.user._id);
 
     if (!user) {
       throw new ApiError(400, "User not found")
-    };
-
-    user.avatar = avatar.url;
-    await user.save();
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, { avatar: avatar.url }, "Avatar updated successfully")
-      )
-  } catch (error) {
-    res.status(error.statusCode || 500).json({ success: false, error: error.message })
-  }
-}
-
-async function updateAccount(req, res) {
-
-  try {
-    const { username, fullname } = req.body
-
-    if (!fullname && !username) {
-      throw new ApiError(400, "At least one field is requied")
-    }
-    if (username && username.length < 6) {
-      throw new ApiError(400, "Username must be more than 6 character")
-    };
-
-    const usernameExists = await UserModel.findOne({ username });
-
-    if (usernameExists) {
-      throw new ApiError(400, "Username already taken")
     }
 
-    const user = await UserModel.findById(req.user._id).select("-password -refreshToken");
-
-    if (!user) {
-      throw new ApiError(400, "User does not found")
+    let avatar
+    if (avatarLocalPath) {
+      avatar = await uploadOnCloudinary(avatarLocalPath);
+      if (!avatar) {
+        throw new ApiError(400, "Failed to upload avatar")
+      }
     }
 
+      if (currPassword && newPassword) {
+      if (currPassword === newPassword) {
+        throw new ApiError(400, "New password must be different");
+      }
+
+      const isPasswordCorrect = await user.isPasswordCorrect(currPassword);
+
+      if (!isPasswordCorrect) {
+        throw new ApiError(400, "Wrong password");
+      }
+
+      user.password = newPassword;
+    }
+
+
+    if (avatar) user.avatar = avatar.url;
     if (username) user.username = username;
     if (fullname) user.fullname = fullname;
+    
     await user.save();
 
     return res
@@ -287,6 +221,7 @@ async function updateAccount(req, res) {
     res.status(error.statusCode || 500).json({ success: false, error: error.message })
   }
 }
+
 
 async function refreshAccessToken(req, res) {
 
@@ -337,8 +272,6 @@ export {
   loginUser,
   logoutUser,
   currentUser,
-  changeCurrentPassword,
-  updateAvatar,
-  updateAccount,
+  updateProfile,
   refreshAccessToken
 }
