@@ -90,13 +90,13 @@ async function loginUser(req, res) {
     let user = await UserModel.findOne({ email });
 
     if (!user) {
-      throw new ApiError(401, "Invalid email");
+      throw new ApiError(401, "Invalid email or password");
     }
 
     const isPasswordCorrect = await user.isPasswordCorrect(password);
 
     if (!isPasswordCorrect) {
-      throw new ApiError(401, "Wrong password");
+      throw new ApiError(401, "Invalid email or password");
     }
 
     const accessToken = user.generateAccessToken();
@@ -221,7 +221,6 @@ async function updateProfile(req, res) {
     res.status(error.statusCode || 500).json({ success: false, error: error.message })
   }
 }
-
 
 async function refreshAccessToken(req, res) {
 

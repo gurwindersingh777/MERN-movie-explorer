@@ -1,7 +1,7 @@
-import { ArrowUpRightIcon } from "lucide-react";
+import { Plus } from "lucide-react";
 import MediaCard from "./MediaCard";
-import { Badge } from "./ui/badge";
 import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
 
 export default function MediaRow({
   data,
@@ -14,23 +14,29 @@ export default function MediaRow({
     <div>
       {data && (
         <>
-          <h2 className=" border-b pb-2 mb-5 text-2xl font-semibold ">
+          <h2 className="mb-4 border-b pb-2 text-lg font-semibold sm:text-xl md:text-2xl">
             {title}
           </h2>
+
           <div
-            className={`flex gap-7 items-center py-5 px-4 ${wrap ? "flex-wrap justify-center" : "overflow-x-auto"} `}
+            className={`gap-4 py-3 sm:gap-6 ${
+              wrap
+                ? "grid grid-cols-2 sm:grid-cols-3  md:grid-cols-4 lg:grid-cols-5 justify-items-center"
+                : "flex overflow-x-auto scrollbar-hide  items-center"
+            }`}
           >
             {data?.map((element) => (
               <MediaCard data={element} key={element.id} />
             ))}
+
             {more && (
-              <Badge asChild>
+              <Button size="xs">
                 <Link
                   to={`media/${pageContext?.category}/${pageContext?.media_type}/${pageContext?.time_window || ""}`}
                 >
-                  More <ArrowUpRightIcon data-icon="inline-end" />
+                  <Plus />
                 </Link>
-              </Badge>
+              </Button>
             )}
           </div>
         </>

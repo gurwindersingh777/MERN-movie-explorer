@@ -37,8 +37,8 @@ export default function Favorites() {
     );
   }
   return (
-    <div className="w-full h-screen px-35 py-10 flex flex-col gap-8">
-      <h1 className="text-3xl">Favorites</h1>
+    <div className="w-full h-screen px-10 md:px-20 lg:px-35 py-10 flex flex-col gap-8">
+      <h1 className="text-xl md:text-3xl">Favorites</h1>
 
       {data?.results?.length > 0 ? (
         <div className="flex flex-col gap-2">
@@ -60,7 +60,7 @@ export default function Favorites() {
                   }
                 />
                 <div>
-                  <span className="text-lg flex items-center gap-2">
+                  <span className="text-sm md:text-lg flex items-center gap-2">
                     {item?.title}
 
                     <Button
@@ -75,7 +75,7 @@ export default function Favorites() {
                       <ArrowUpRightIcon />
                     </Button>
                   </span>
-                  <p className="line-clamp-4 text-neutral-400 text-xs mt-3 overflow-y-auto">{item?.overview}</p>
+                  <p className="line-clamp-4 text-neutral-400 text-[11.5px] md:text-xs mt-3 overflow-y-auto">{item?.overview}</p>
                 </div>
               </div>
               <DropdownMenu>

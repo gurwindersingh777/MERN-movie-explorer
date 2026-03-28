@@ -9,12 +9,17 @@ async function addToFavorite(req, res) {
     if (!media_type || !tmdbID || !title || !poster_path || !overview) {
       throw new ApiError(400, "All fields are required")
     }
+    console.log("sdc");
 
     const alreadyExists = await FavoriteModel.findOne({
       user: req.user._id,
       tmdbID: Number(tmdbID),
       media_type
     });
+
+    
+    console.log(alreadyExists);
+    
 
     if (alreadyExists) {
       throw new ApiError(400, "Already added in Favorites")
@@ -26,9 +31,11 @@ async function addToFavorite(req, res) {
       title,
       overview,
       poster_path,
-
       user: req.user._id
     })
+
+    console.log(favorite);
+    
 
     if (!favorite) {
       throw new ApiError(400, "Failed to add in favorite")

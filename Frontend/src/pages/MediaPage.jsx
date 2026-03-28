@@ -2,7 +2,7 @@ import MediaRow from "@/components/MediaRow";
 import MediaPagination from "@/components/MediaPagination";
 import { Spinner } from "@/components/ui/spinner";
 import { useCategory, useTrending } from "@/hooks/useMedia";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 
 export default function MediaPage() {
@@ -21,7 +21,9 @@ export default function MediaPage() {
   const totalPages = Math.min(data?.total_pages || 1, 500);
 
   const title =
-    category === "trending" ? `Trending by ${time_window}` : `${category}`;
+    category === "trending"
+      ? `Trending by ${time_window}`
+      : `${category.replace("_", " ")}`;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,7 +31,7 @@ export default function MediaPage() {
 
   if (isPending) {
     return (
-      <div className="w-full min-h-screen flex justify-center items-center pb-25">
+      <div className="flex min-h-[70vh] items-center justify-center">
         <Spinner />
       </div>
     );
@@ -37,7 +39,7 @@ export default function MediaPage() {
 
   if (isError) {
     return (
-      <div className="w-full min-h-screen flex justify-center items-center pb-25 text-sm text-neutral-300">
+      <div className="flex min-h-[70vh] items-center justify-center text-sm text-neutral-300">
         Something went wrong
       </div>
     );
@@ -46,18 +48,23 @@ export default function MediaPage() {
   return (
     <>
       {data?.results?.length > 0 && (
-        <div className="p-15 px-25 flex flex-col gap-5 w-full min-h-screen ">
+        <div className="flex min-h-screen w-full flex-col gap-8 px-9 py-6 sm:px-6 md:px-10 lg:px-16 xl:px-24">
+          
           <MediaRow
             data={data?.results}
             title={title}
             more={false}
             wrap={true}
           />
-          <MediaPagination
-            totalPages={totalPages}
-            page={page}
-            setSearchParams={setSearchParams}
-          />
+
+          <div className="flex justify-center pt-4">
+            <MediaPagination
+              totalPages={totalPages}
+              page={page}
+              setSearchParams={setSearchParams}
+            />
+          </div>
+
         </div>
       )}
     </>

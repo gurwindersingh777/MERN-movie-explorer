@@ -1,5 +1,6 @@
+import PageWrapper from "@/components/PageWrapper";
 import Hero from "../components/Hero";
-import Wrapper from "../components/Wrapper";
+import Wrapper from "../components/MediaWrapper";
 import { useCategory, useTrending } from "../hooks/useMedia";
 
 export default function Movies() {
@@ -12,16 +13,58 @@ export default function Movies() {
   const nowPlayingMovie = useCategory("movie", "now_playing");
 
   return (
-    <>
-      <div className="flex flex-col gap-10 w-full px-20 pt-10 pb-40">
-        <Hero query={hero} />
-        <Wrapper title="Trending Movies Today" query={trendingDay} />
-        <Wrapper title="Trending Movies This Week" query={trendingWeek} />
-        <Wrapper title="Popular Movies" query={popularMovie} />
-        <Wrapper title="Top Rated Movies" query={topRatedMovie} />
-        <Wrapper title="Upcoming Movies " query={upcomingMovie} />
-        <Wrapper title="Now Playing" query={nowPlayingMovie} />
-      </div>
-    </>
+    <PageWrapper>
+      <Hero query={hero} />
+      <Wrapper
+        title="Trending Movies Today"
+        query={trendingDay}
+        pageContext={{
+          category: "trending",
+          media_type: "movie",
+          time_window: "day",
+        }}
+      />
+      <Wrapper
+        title="Trending Movies This Week"
+        query={trendingWeek}
+        pageContext={{
+          category: "trending",
+          media_type: "movie",
+          time_window: "week",
+        }}
+      />
+      <Wrapper
+        title="Popular Movies"
+        query={popularMovie}
+        pageContext={{
+          category: "popular",
+          media_type: "movie",
+        }}
+      />
+      <Wrapper
+        title="Top Rated Movies"
+        query={topRatedMovie}
+        pageContext={{
+          category: "top_rated",
+          media_type: "movie",
+        }}
+      />
+      <Wrapper
+        title="Upcoming Movies "
+        query={upcomingMovie}
+        pageContext={{
+          category: "upcoming",
+          media_type: "movie",
+        }}
+      />
+      <Wrapper
+        title="Now Playing"
+        query={nowPlayingMovie}
+        pageContext={{
+          category: "now_playing",
+          media_type: "movie",
+        }}
+      />
+    </PageWrapper>
   );
 }

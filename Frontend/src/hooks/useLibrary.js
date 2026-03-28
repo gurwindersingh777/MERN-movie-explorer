@@ -46,7 +46,7 @@ export function useMediaWatchlater(tmdbID) {
 export function useAllWatchlater(page) {
   return useQuery({
     queryFn: () => getAllWatchlater(page),
-    queryKey: ["watchlater",page],
+    queryKey: ["watchlater", page],
     retry: false
   })
 }
@@ -62,7 +62,7 @@ export function useAddToFavorite() {
       })
     },
     onError: (error) => {
-      toast.error('Failed to Add in Favorites' || error.response?.data?.message || error.message);
+      toast.error(error.response?.data?.message || error.message || 'Failed to Add in Favorites');
     },
   })
 }
@@ -70,14 +70,14 @@ export function useAddToFavorite() {
 export function useRemoveFromFavorite() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id  }) => removeFromFavorite(id),
+    mutationFn: ({ id }) => removeFromFavorite(id),
     onSuccess: (_, variables) => {
       toast.success("Remove From Favorites");
       queryClient.setQueryData(
         ["favorite", variables.tmdbID],
         null
       )
-       queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["favorite"]
       })
     },
@@ -98,7 +98,7 @@ export function useMediaFavorite(tmdbID) {
 export function useAllFavorite(page) {
   return useQuery({
     queryFn: () => getAllFavorite(page),
-    queryKey: ["favorite",page],
+    queryKey: ["favorite", page],
     retry: false
   })
 }

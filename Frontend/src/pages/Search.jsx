@@ -14,16 +14,19 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import PageWrapper from "@/components/PageWrapper";
+import MediaPagination from "@/components/MediaPagination";
 
 export default function Search() {
   const { q } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
   const { data, isPending, isError } = useSearch(q, page);
+  const totalPages = Math.min(data?.total_pages || 1, 500);
 
   if (isPending) {
     return (
-      <div className="w-full min-h-screen flex justify-center items-center pb-25">
+      <div className="flex min-h-screen w-full items-center justify-center pb-25">
         <Spinner />
       </div>
     );
@@ -31,104 +34,34 @@ export default function Search() {
 
   if (isError) {
     return (
-      <div className="w-full min-h-screen flex justify-center items-center pb-25 text-sm text-neutral-300">
+      <div className="flex min-h-screen w-full items-center justify-center pb-25 text-sm text-neutral-300">
         Something went wrong
       </div>
     );
   }
 
   return (
-    <div className="p-15 px-25 flex justify-center w-full h-full gap-10 flex-col">
-      {data?.results.length > 0 ? (
-        <MediaRow data={data?.results} title={q} more={false} wrap={true} />
-      ) : (
-        <div className="flex flex-col gap-5">
-          <span className="flex items-center justify-center gap-2">
-            <OctagonX />
-            No result Found : {q}
-          </span>
-          <Link to="/">
-            <Button>
-              <ArrowLeft />
-              Back to home
-            </Button>
-          </Link>
-        </div>
-      )}
+    <PageWrapper>
+   
+        {data?.results?.length > 0 && (
+          <div className="flex min-h-screen w-full flex-col gap-8 px-9 py-6 sm:px-6 md:px-10 lg:px-16 xl:px-24">
+            <MediaRow
+              data={data?.results}
+              title={q}
+              more={false}
+              wrap={true}
+            />
 
-      <Pagination>
-        <PaginationContent>
-          {page > 1 && (
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => setSearchParams({ page: page - 1 })}
+            <div className="flex justify-center pt-4">
+              <MediaPagination
+                totalPages={totalPages}
+                page={page}
+                setSearchParams={setSearchParams}
               />
-            </PaginationItem>
-          )}
-
-          {page > 2 && (
-            <PaginationItem>
-              <PaginationLink onClick={() => setSearchParams({ page: 1 })}>
-                1
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          {page > 3 && (
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-          )}
-
-          {page > 1 && (
-            <PaginationItem>
-              <PaginationLink
-                onClick={() => setSearchParams({ page: page - 1 })}
-              >
-                {page - 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          <PaginationItem>
-            <PaginationLink isActive> {page} </PaginationLink>
-          </PaginationItem>
-
-          {page + 1 < data?.total_pages && (
-            <PaginationItem>
-              <PaginationLink
-                onClick={() => setSearchParams({ page: page + 1 })}
-              >
-                {page + 1}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          {page + 2 < data?.total_pages && (
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-          )}
-
-          {page < data?.total_pages && (
-            <PaginationItem>
-              <PaginationLink
-                onClick={() => setSearchParams({ page: data?.total_pages })}
-              >
-                {data?.total_pages}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
-          {page < data?.total_pages && (
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => setSearchParams({ page: page + 1 })}
-              />
-            </PaginationItem>
-          )}
-        </PaginationContent>
-      </Pagination>
-    </div>
+            </div>
+          </div>
+        )}
+    
+    </PageWrapper>
   );
 }

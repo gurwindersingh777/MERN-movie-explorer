@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 export default function Register() {
   const { mutate, isPending } = useRegister();
+
   const {
     register,
     handleSubmit,
@@ -17,43 +18,48 @@ export default function Register() {
   } = useForm({ resolver: zodResolver(registerSchema) });
 
   return (
-    <div className=" w-screen h-screen flex justify-center items-center p-8">
-      <div className="flex h-full w-100  justify-between flex-col rounded-3xl  border border-neutral-800  p-10">
-        <Link className="font-semibold text-xl ml-1 font-mono text-red-400" to="/">
-          {" "}
+    <div className="flex h-full items-start justify-center sm:items-center sm:p-10">
+      <div className="m-10 flex w-full max-w-md flex-col gap-6 rounded-2xl border border-neutral-800 p-6 sm:p-8">
+        <Link className="font-mono text-xl font-semibold text-red-400" to="/">
           Movie Explorer
         </Link>
-        <h1 className=" text-3xl font-bold mb-2 ">Create a new account</h1>
 
-        <form onSubmit={handleSubmit(mutate)} className="flex flex-col gap-5 ">
-          <Field  >
+        <h1 className="text-xl font-bold sm:text-3xl">Create a new account</h1>
+
+        <form
+          onSubmit={handleSubmit(mutate)}
+          className="flex flex-col gap-4 sm:gap-5"
+        >
+          <Field>
             <FieldLabel htmlFor="username">Username</FieldLabel>
+
             {errors.username && (
-              <FieldError>{errors?.username.message}</FieldError>
+              <FieldError>{errors.username.message}</FieldError>
             )}
 
             <Input
               id="username"
-              type="username"
-              placeholder="Enter a username"
+              placeholder="Enter username"
               {...register("username")}
             />
           </Field>
 
           <Field>
             <FieldLabel htmlFor="email">Email address</FieldLabel>
-            {errors.email && <FieldError>{errors?.email.message}</FieldError>}
+
+            {errors.email && <FieldError>{errors.email.message}</FieldError>}
 
             <Input
               id="email"
               type="email"
-              placeholder="Email address to get started"
+              placeholder="Email address"
               {...register("email")}
             />
           </Field>
 
           <Field>
             <FieldLabel htmlFor="password">Password</FieldLabel>
+
             {errors.password && (
               <FieldError>{errors.password.message}</FieldError>
             )}
@@ -61,22 +67,20 @@ export default function Register() {
             <Input
               id="password"
               type="password"
-              placeholder="Password address to get started"
+              placeholder="Enter password"
               {...register("password")}
             />
           </Field>
 
-          <Button
-            disabled={isPending}
-          >
+          <Button disabled={isPending} className="w-full">
             {isPending ? <Spinner /> : "Sign up"}
           </Button>
         </form>
 
-        <span className="text-xs font-medium mt-5 ">
+        <span className="text-center text-xs font-medium">
           Already have an account?{" "}
-          <Link to="/login">
-          <Button className="pl-0.5" size="xs" variant="link">Login now</Button>
+          <Link to="/login" className="hover:underline">
+            Login now
           </Link>
         </span>
       </div>

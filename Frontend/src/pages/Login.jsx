@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 export default function Login() {
   const { mutate, isPending } = useLogin();
+
   const {
     register,
     handleSubmit,
@@ -20,26 +21,23 @@ export default function Login() {
   });
 
   return (
-    <div className=" w-screen h-screen flex justify-center items-center p-10">
-      <div className="flex h-full w-100  justify-between  flex-col rounded-3xl  border border-neutral-800  p-10">
-        <Link className="font-semibold text-xl ml-1 font-mono text-red-400" to="/">
-          {" "}
+    <div className="flex min-h-screen items-start justify-center px-10 pt-20 sm:items-center sm:py-10">
+      <div className="flex w-full max-w-md flex-col gap-6 rounded-2xl border border-neutral-800 p-6 sm:p-8">
+        <Link className="font-mono text-xl font-semibold text-red-400" to="/">
           Movie Explorer
         </Link>
-        <h1 className="mt-6  text-3xl font-bold mb-10 ">Welcome back!</h1>
 
-        <form
-          onSubmit={handleSubmit(mutate)}
-          className="flex flex-col gap-5 mb-10 "
-        >
+        <h1 className="text-2xl font-bold sm:text-3xl">Welcome back!</h1>
+
+        <form onSubmit={handleSubmit(mutate)} className="flex flex-col gap-4 sm:gap-5">
           <Field>
             <FieldLabel htmlFor="email">Email address</FieldLabel>
-            {errors.email && <FieldError>{errors?.email.message}</FieldError>}
+            {errors.email && <FieldError>{errors.email.message}</FieldError>}
 
             <Input
               id="email"
               type="email"
-              placeholder="Email address to get started"
+              placeholder="Email address"
               {...register("email")}
             />
           </Field>
@@ -53,21 +51,22 @@ export default function Login() {
             <Input
               id="password"
               type="password"
-              placeholder="Password address to get started"
+              placeholder="Enter password"
               {...register("password")}
             />
           </Field>
 
-          <Button disabled={isPending}>
+          <Button disabled={isPending} className="w-full">
             {isPending ? <Spinner /> : "Log in"}
           </Button>
-          <Link className="text-center text-xs ">Forget password?</Link>
+
+          <Link className="text-center text-xs">Forget password?</Link>
         </form>
 
-        <span className="text-xs font-medium mt-10 ">
+        <span className="text-center text-xs font-medium">
           Create a new account?{" "}
-          <Link to="/register">
-            <Button className="pl-0.5" size="xs" variant="link">Register now</Button>
+          <Link to="/register" className="hover:underline">
+            Register now
           </Link>
         </span>
       </div>

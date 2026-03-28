@@ -39,7 +39,7 @@ export default function GenrePage() {
   return (
     <>
       {data?.results.length > 0 && (
-        <div className="p-15 px-25 flex flex-col gap-5 justify-center w-full h-full">
+        <div className="p-10 sm:p-15 md:px-25 flex flex-col gap-5  w-full h-full">
           <MediaRow
             data={data?.results}
             title={genre_name}

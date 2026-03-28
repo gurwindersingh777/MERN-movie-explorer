@@ -53,10 +53,10 @@ export default function Profile() {
   }
 
   return (
-    <section className="min-h-screen bg-neutral-950 text-gray-100 flex p-10">
-      <main className="flex-1 ml-8 bg-neutral-900 rounded-2xl p-10 shadow-lg">
+    <section className="flex min-h-screen bg-neutral-950 p-10 text-gray-100">
+      <main className=" flex-1 rounded-2xl bg-neutral-900 p-10 shadow-lg">
         <div className="flex justify-between">
-          <h1 className="text-xl font-semibold mb-8">Profile</h1>
+          <h1 className="mb-8 text-xl font-semibold">Profile</h1>
           <Button onClick={() => setUpdatePanel((prev) => !prev)}>
             {updatePanel ? (
               <X />
@@ -67,10 +67,10 @@ export default function Profile() {
             )}
           </Button>
         </div>
-        <div className="flex gap-10">
-          <div className="flex flex-col items-center justify-center bg-neutral-800 rounded-2xl w-1/2">
+        <div className="md:flex md:gap-10 justify-between">
+          <div className="hidden w-1/2 flex-col items-center justify-center rounded-2xl bg-neutral-800 md:flex">
             {user?.avatar ? (
-              <Avatar className="w-40 h-40 border border-neutral-700">
+              <Avatar className="h-40 w-40 border border-neutral-700">
                 <AvatarImage src={user?.avatar} />
                 <AvatarFallback>{user.username}</AvatarFallback>
               </Avatar>
@@ -81,7 +81,7 @@ export default function Profile() {
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="w-1/2 flex flex-col gap-4"
+            className="md:w-1/2 flex flex-col gap-4"
           >
             <Field>
               <FieldLabel>Fullname</FieldLabel>
